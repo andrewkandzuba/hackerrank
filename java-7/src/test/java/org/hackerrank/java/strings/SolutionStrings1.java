@@ -1,4 +1,4 @@
-package org.hackerrank.java;
+package org.hackerrank.java.strings;
 
 import java.util.Scanner;
 

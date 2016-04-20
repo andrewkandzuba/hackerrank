@@ -1,4 +1,4 @@
-package org.hackerrank.java;
+package org.hackerrank.java.datatypes;
 
 import java.util.HashMap;
 import java.util.Map;
