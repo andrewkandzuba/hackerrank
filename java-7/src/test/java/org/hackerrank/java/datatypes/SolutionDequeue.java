@@ -10,14 +10,13 @@ public class SolutionDequeue {
         int n = in.nextInt();
         int m = in.nextInt();
         for (int i = 0; i < n; i++) {
-            array.add(in.nextInt());
+            deque.addLast(in.nextInt());
         }
         int maxUnique = 0;
         for (int i = 0; i < n - m + 1; i++) {
-            for (int j = 1; j < m; j++) {
-
+            Set<Integer> un = new HashSet<>();
+            for(int j=0; j < m; j++){
             }
-
         }
         System.out.println(maxUnique);
     }
