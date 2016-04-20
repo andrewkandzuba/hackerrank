@@ -6,18 +6,35 @@ public class SolutionDequeue {
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         Deque<Integer> deque = new ArrayDeque<>();
-        List<Integer> array = new ArrayList<>();
         int n = in.nextInt();
         int m = in.nextInt();
+        int maxUniqueCount = 0;
+        int currUnique = 0;
+        Map<Integer, Integer> map = new HashMap<>();
         for (int i = 0; i < n; i++) {
-            deque.addLast(in.nextInt());
-        }
-        int maxUnique = 0;
-        for (int i = 0; i < n - m + 1; i++) {
-            Set<Integer> un = new HashSet<>();
-            for(int j=0; j < m; j++){
+            int num = in.nextInt();
+            deque.addLast(num);
+            Integer count = map.get(num);
+            if (count == null) {
+                currUnique++;
+                map.put(num, 1);
+            } else {
+                map.put(num, count + 1);
+            }
+            if (deque.size() == m) {
+                maxUniqueCount = Math.max(maxUniqueCount, currUnique);
+                int removed = deque.pollFirst();
+                count = map.get(removed);
+                if (count != null) {
+                    if (count == 1) {
+                        map.remove(removed);
+                        currUnique--;
+                    } else {
+                        map.put(removed, count - 1);
+                    }
+                }
             }
         }
-        System.out.println(maxUnique);
+        System.out.println(maxUniqueCount);
     }
 }
