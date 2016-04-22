@@ -4,10 +4,10 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DuplicateWords
+public class SolutionDuplicateStrings
 {
     public static void main(String[] args){
-        String pattern = "\\b(\\w+)\\s+(\\w+)+\\b";
+        String pattern = "\\b(\\w+)(\\b\\W+\\b\\1\\b)*";
         Pattern r = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
 
         Scanner in = new Scanner(System.in);
@@ -17,7 +17,7 @@ public class DuplicateWords
             Matcher m = r.matcher(input);
             boolean findMatch = true;
             while(m.find( )){
-                input = input.replaceAll(pattern, m.group());
+                input = input.replaceAll(m.group(), m.group(1));
                 findMatch = false;
             }
             System.out.println(input);
