@@ -10,7 +10,8 @@
     <packaging>pom</packaging>
 
     <properties>
-        <testng.version>6.9.10</testng.version>
+        <junit.version>4.12</junit.version>
+        <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
     </properties>
 
     <dependencyManagement>

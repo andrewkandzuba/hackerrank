@@ -1,6 +1,6 @@
 package org.hackerrank.java.interview;
 
-public class SinglyNode<T> {
+public class SinglyNode<T> implements Comparable<T> {
     private T data;
     private SinglyNode<T> next;
 
@@ -33,7 +33,7 @@ public class SinglyNode<T> {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         SinglyNode<T> n = this;
-        while (n.next != null) {
+        while (n != null) {
             if(sb.length() > 0){
                 sb.append(",");
             }
@@ -41,5 +41,11 @@ public class SinglyNode<T> {
             n = n.next;
         }
         return "SinglyNode{" + sb.toString() + "}";
+    }
+
+
+    @Override
+    public int compareTo(T o) {
+        return o.;
     }
 }

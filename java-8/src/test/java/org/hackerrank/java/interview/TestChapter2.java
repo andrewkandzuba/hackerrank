@@ -1,7 +1,7 @@
 package org.hackerrank.java.interview;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.HashSet;
 import java.util.Random;
@@ -47,17 +47,38 @@ public class TestChapter2 {
     @Test
     public void testFindKthToLast() throws Exception {
         SinglyNode<Integer> node = new SinglyNode<>(0);
-        for(int i = 1; i < 20; i++){
+        for (int i = 1; i < 20; i++) {
             node.appendToTail(i);
         }
         LOGGER.info(node.toString());
+        // find k(th) from the end
+        Assert.assertEquals(findFromEnd(node, 3).getData().intValue(), 17);
+        Assert.assertEquals(findFromEnd(node, 18).getData().intValue(), 2);
+        try {
+            findFromEnd(node, 23);
+            Assert.assertFalse(true);
+        } catch (Exception e) {
+            Assert.assertTrue(true);
+        }
     }
 
-    private void removeDuplicates(SinglyNode<Integer> node) {
+    @Test
+    public void testDeleteInMiddle() throws Exception {
+        SinglyNode<Integer> node = new SinglyNode<>(0);
+        Assert.assertNull(deleteInMiddle(node, node));
+        Assert.assertEquals(node, deleteInMiddle(node, null));
+        for (int i = 1; i < 2; i++) {
+            node.appendToTail(i);
+        }
+        LOGGER.info(deleteInMiddle(node,  new SinglyNode<>(1)).toString());
+    }
+
+    // Utility methods
+    private <T> void removeDuplicates(SinglyNode<T> node) {
         long timeStamp = System.currentTimeMillis();
-        SinglyNode<Integer> current = node;
+        SinglyNode<T> current = node;
         while (current != null) {
-            SinglyNode<Integer> runner = current;
+            SinglyNode<T> runner = current;
             while (runner.getNext() != null) {
                 if (current.getData().equals(runner.getNext().getData())) {
                     runner.setNext(runner.getNext().getNext());
@@ -71,11 +92,11 @@ public class TestChapter2 {
         LOGGER.info(String.format("execTime: %s ms", execTime));
     }
 
-    private void removeDuplicatesWithSet(SinglyNode<Integer> node) {
+    private <T> void removeDuplicatesWithSet(SinglyNode<T> node) {
         long timeStamp = System.currentTimeMillis();
-        Set<Integer> set = new HashSet<>();
+        Set<T> set = new HashSet<>();
         set.add(node.getData());
-        SinglyNode<Integer> runner = node;
+        SinglyNode<T> runner = node;
         while (runner.getNext() != null) {
             if (set.contains(runner.getNext().getData())) {
                 runner.setNext(runner.getNext().getNext());
@@ -88,9 +109,9 @@ public class TestChapter2 {
         LOGGER.info(String.format("execTime: %s ms", execTime));
     }
 
-    private boolean checkNoDuplicates(SinglyNode<Integer> node){
-        Set<Integer> set = new HashSet<>();
-        SinglyNode<Integer> runner = node;
+    private <T> boolean checkNoDuplicates(SinglyNode<T> node) {
+        Set<T> set = new HashSet<>();
+        SinglyNode<T> runner = node;
         while (runner != null) {
             if (!set.contains(runner.getData())) {
                 set.add(runner.getData());
@@ -100,5 +121,36 @@ public class TestChapter2 {
             }
         }
         return true;
+    }
+
+    private <T> SinglyNode<T> findFromEnd(SinglyNode<T> node, int k) throws Exception {
+        SinglyNode<T> current = node;
+        SinglyNode<T> runner = current;
+        for (int i = 0; i < k; i++) {
+            if (runner.getNext() != null) {
+                runner = runner.getNext();
+            } else {
+                throw new Exception(String.format("%s node from the end not found!!!", k));
+            }
+        }
+        while (runner != null) {
+            current = current.getNext();
+            runner = runner.getNext();
+        }
+        return current;
+    }
+
+    private <T> SinglyNode<T> deleteInMiddle(SinglyNode<T> start, SinglyNode<T> delete) throws Exception {
+        if(start == delete){
+            return start.getNext();
+        }
+        SinglyNode<T> current = start;
+        SinglyNode<T> runner = start;
+        while (runner.getNext() != delete || runner.getNext() != null) {
+            current = runner;
+            runner = runner.getNext();
+        }
+        current.setNext(runner.getNext());
+        return start;
     }
 }
