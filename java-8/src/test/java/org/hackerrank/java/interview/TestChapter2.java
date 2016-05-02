@@ -70,7 +70,28 @@ public class TestChapter2 {
         for (int i = 1; i < 2; i++) {
             node.appendToTail(i);
         }
-        LOGGER.info(deleteInMiddle(node,  new SinglyNode<>(1)).toString());
+        LOGGER.info(deleteInMiddle(node, new SinglyNode<>(1)).toString());
+
+        node = new SinglyNode<>(0);
+        for (int i = 1; i < 20; i++) {
+            node.appendToTail(i);
+        }
+        LOGGER.info(node.toString());
+        LOGGER.info(deleteInMiddle(node, new SinglyNode<>(15)).toString());
+
+        node = new SinglyNode<>(0);
+        for (int i = 1; i < 20; i++) {
+            node.appendToTail(i);
+        }
+        LOGGER.info(node.toString());
+        LOGGER.info(deleteInMiddle(node, new SinglyNode<>(19)).toString());
+
+        node = new SinglyNode<>(0);
+        for (int i = 1; i < 20; i++) {
+            node.appendToTail(i);
+        }
+        LOGGER.info(node.toString());
+        LOGGER.info(deleteInMiddle(node, new SinglyNode<>(100)).toString());
     }
 
     // Utility methods
@@ -141,16 +162,21 @@ public class TestChapter2 {
     }
 
     private <T> SinglyNode<T> deleteInMiddle(SinglyNode<T> start, SinglyNode<T> delete) throws Exception {
-        if(start == delete){
+        if (delete == null || start == null) {
+            return start;
+        }
+        if (start == delete) {
             return start.getNext();
         }
         SinglyNode<T> current = start;
-        SinglyNode<T> runner = start;
-        while (runner.getNext() != delete || runner.getNext() != null) {
+        SinglyNode<T> runner = start.getNext();
+        while (runner != null && !runner.getData().equals(delete.getData())) {
             current = runner;
             runner = runner.getNext();
         }
-        current.setNext(runner.getNext());
+        if (runner != null) {
+            current.setNext(runner.getNext());
+        }
         return start;
     }
 }
