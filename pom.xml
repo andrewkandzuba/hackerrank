@@ -9,6 +9,10 @@
     <name>hackerrank ::: ${project.artifactId}</name>
     <packaging>pom</packaging>
 
+    <properties>
+        <testng.version>6.9.10</testng.version>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
         </dependencies>
