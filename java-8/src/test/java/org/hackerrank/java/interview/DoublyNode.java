@@ -1,6 +1,6 @@
 package org.hackerrank.java.interview;
 
-public class DoublyNode<T> {
+public class DoublyNode<T extends Comparable<? super T>> {
     private T data;
     private DoublyNode<T> next;
     private DoublyNode<T> prev;
@@ -55,5 +55,23 @@ public class DoublyNode<T> {
             n = n.next;
         }
         return "DoublyNode{" + sb.toString() + "}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DoublyNode)) return false;
+
+        DoublyNode<?> that = (DoublyNode<?>) o;
+
+        return getData() != null ? getData().equals(that.getData()) : that.getData() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getData() != null ? getData().hashCode() : 0;
+        result = 31 * result + (getNext() != null ? getNext().hashCode() : 0);
+        result = 31 * result + (getPrev() != null ? getPrev().hashCode() : 0);
+        return result;
     }
 }

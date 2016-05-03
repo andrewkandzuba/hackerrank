@@ -12,11 +12,11 @@ public class TestChapter2_1 {
 
     @Test
     public void testPartitioning() throws Exception {
-        AtomicReference<SinglyNode<Integer>> reference = new AtomicReference<>();
+        AtomicReference<DoublyNode<Integer>> reference = new AtomicReference<>();
         new Random().ints(20, 0, 10).forEach(value -> {
-            SinglyNode<Integer> node = reference.get();
+            DoublyNode<Integer> node = reference.get();
             if (reference.get() == null) {
-                reference.set(new SinglyNode<>(value));
+                reference.set(new DoublyNode<>(value));
             } else {
                 node.appendToTail(value);
             }
@@ -26,30 +26,42 @@ public class TestChapter2_1 {
         LOGGER.info(reference.get().toString());
     }
 
-    private <T extends Comparable<? super T>> void partitionAround(SinglyNode<T> start, T x) {
+    private <T extends Comparable<? super T>> void partitionAround(DoublyNode<T> start, T x) {
         if (start == null || start.getNext() == null) {
             return;
         }
-        SinglyNode<T> runner = start;
-        SinglyNode<T> current = start;
-        while (runner.getData().compareTo(x) < 0) {
-            current = runner;
-            runner = runner.getNext();
-            if(runner == null){
-                break;
+        DoublyNode<T> fl = null;
+        DoublyNode<T> fe = null;
+        DoublyNode<T> fg = null;
+        DoublyNode<T> current = start;
+        while (current != null){
+            if(current.getData().compareTo(x) < 0){
+               if(fl == null) {
+                   fl = new DoublyNode<>(current.getData());
+               } else {
+                   fl.appendToTail(current.getData());
+               }
+            } else if (current.getData().compareTo(x) == 0){
+                if(fe == null) {
+                    fe = new DoublyNode<>(current.getData());;
+                } else {
+                    fe.appendToTail(current.getData());
+                }
+            } else if (current.getData().compareTo(x) > 0){
+                if(fg == null) {
+                    fg = new DoublyNode<>(current.getData());;
+                } else {
+                    fg.appendToTail(current.getData());
+                }
             }
+            current = current.getNext();
         }
-        while (runner != null) {
-            if(runner.getData().compareTo(x) < 0) {
-                SinglyNode<T> exchange = runner;
-                current.setNext(runner.getNext());
-                runner = runner.getNext();
-                exchange.setNext(start.getNext());
-                start.setNext(exchange);
-            } else {
-                runner = runner.getNext();
-                current = current.getNext();
-            }
-        }
+        int i = 10;
+    }
+
+    private <T extends Comparable<? super T>> void swapNodes(DoublyNode<T> from, DoublyNode<T> to) {
+        T from_to = to.getData();
+        to.setData(from.getData());
+        from.setData(from_to);
     }
 }
