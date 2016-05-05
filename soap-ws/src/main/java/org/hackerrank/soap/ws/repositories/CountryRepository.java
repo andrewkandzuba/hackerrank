@@ -1,4 +1,4 @@
-package org.hackkerank.soap.ws.repositories;
+package org.hackerrank.soap.ws.repositories;
 
 import org.hackerrank.soap.ws.domain.Country;
 import org.hackerrank.soap.ws.domain.Currency;

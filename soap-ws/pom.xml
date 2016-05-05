@@ -74,7 +74,7 @@
                 <artifactId>jaxb2-maven-plugin</artifactId>
                 <configuration>
                     <sources>
-                        <source>src/main/resources/xsds</source>
+                        <source>src/main/resources/META-INF</source>
                     </sources>
                     <packageName>org.hackerrank.soap.ws.domain</packageName>
                     <outputDirectory>${project.build.directory}/generated-sources</outputDirectory>

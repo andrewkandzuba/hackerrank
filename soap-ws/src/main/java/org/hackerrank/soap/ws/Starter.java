@@ -1,4 +1,4 @@
-package org.hackkerank.soap.ws;
+package org.hackerrank.soap.ws;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
