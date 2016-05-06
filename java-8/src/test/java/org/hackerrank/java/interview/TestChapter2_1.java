@@ -12,18 +12,19 @@ public class TestChapter2_1 {
 
     @Test
     public void testPartitioning() throws Exception {
-        AtomicReference<DoublyNode<Integer>> reference = new AtomicReference<>();
-        new Random().ints(20, 0, 10).forEach(value -> {
-            DoublyNode<Integer> node = reference.get();
-            if (reference.get() == null) {
-                reference.set(new DoublyNode<>(value));
-            } else {
-                node.appendToTail(value);
-            }
-        });
-        LOGGER.info(reference.get().toString());
-        partitionAround(reference.get(), 5);
-        LOGGER.info(reference.get().toString());
+        for(int i = 0; i < 1000; i++) {
+            AtomicReference<DoublyNode<Integer>> reference = new AtomicReference<>();
+            new Random().ints(20, 0, 10).forEach(value -> {
+                DoublyNode<Integer> node = reference.get();
+                if (reference.get() == null) {
+                    reference.set(new DoublyNode<>(value));
+                } else {
+                    node.appendToTail(value);
+                }
+            });
+            //LOGGER.info(reference.get().toString());
+            partitionAround(reference.get(), 5);
+        }
     }
 
     private <T extends Comparable<? super T>> void partitionAround(DoublyNode<T> start, T x) {
@@ -33,30 +34,60 @@ public class TestChapter2_1 {
         DoublyNode<T> fl = null;
         DoublyNode<T> fe = null;
         DoublyNode<T> fg = null;
+
         DoublyNode<T> current = start;
-        while (current != null){
-            if(current.getData().compareTo(x) < 0){
-               if(fl == null) {
-                   fl = new DoublyNode<>(current.getData());
-               } else {
-                   fl.appendToTail(current.getData());
-               }
-            } else if (current.getData().compareTo(x) == 0){
-                if(fe == null) {
-                    fe = new DoublyNode<>(current.getData());;
+        DoublyNode<T> runner = start.getNext();
+        while (current != null) {
+            if (current.getData().compareTo(x) < 0) {
+                if (fl == null) {
+                    fl = current;
+                    current.setPrev(null);
+                    current.setNext(null);
                 } else {
-                    fe.appendToTail(current.getData());
+                    fl.appendToTail(current);
+                    current.setPrev(fl);
+                    current.setNext(null);
                 }
-            } else if (current.getData().compareTo(x) > 0){
-                if(fg == null) {
-                    fg = new DoublyNode<>(current.getData());;
+            } else if (current.getData().compareTo(x) == 0) {
+                if (fe == null) {
+                    fe = current;
+                    current.setPrev(null);
+                    current.setNext(null);
                 } else {
-                    fg.appendToTail(current.getData());
+                    fe.appendToTail(current);
+                    current.setPrev(fe);
+                    current.setNext(null);
+                }
+            } else if (current.getData().compareTo(x) > 0) {
+                if (fg == null) {
+                    fg = current;
+                    current.setPrev(null);
+                    current.setNext(null);
+                } else {
+                    fg.appendToTail(current);
+                    current.setPrev(fg);
+                    current.setNext(null);
                 }
             }
-            current = current.getNext();
+            current = runner;
+            if (runner != null) {
+                runner = runner.getNext();
+            }
         }
-        int i = 10;
+        start = fl;
+        if(start!=null){
+            start.appendToTail(fe);
+        } else {
+            start = fe;
+        }
+        if(start!=null){
+            start.appendToTail(fg);
+        } else {
+            start = fg;
+        }
+        if(start != null) {
+            LOGGER.info(start.toString());
+        }
     }
 
     private <T extends Comparable<? super T>> void swapNodes(DoublyNode<T> from, DoublyNode<T> to) {

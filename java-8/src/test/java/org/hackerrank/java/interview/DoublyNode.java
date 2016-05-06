@@ -43,6 +43,16 @@ public class DoublyNode<T extends Comparable<? super T>> {
         end.prev = n;
     }
 
+    public void appendToTail(DoublyNode<T> end){
+        if(end == null) return;
+        DoublyNode<T> n = this;
+        while (n.next != null) {
+            n = n.next;
+        }
+        n.next = end;
+        end.prev = n;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
