@@ -172,6 +172,21 @@ public class TestChapter2_2 {
     }
 
 
+    @Test
+    public void TestQuestion2_6() throws Exception {
+        SinglyNode<Character> n1 = new SinglyNode<>('A');
+        n1.appendToTail('B');
+        SinglyNode<Character> c = n1.appendToTail('C');
+        SinglyNode<Character> end = n1.appendToTail('D');
+        end.setNext(c);
+        SinglyNode<Character> b = brokenAt(n1);
+        Assert.assertNotNull(b);
+        Assert.assertEquals(b.getData().charValue(), 'D');
+
+        Assert.assertNull(brokenAt(null));
+        Assert.assertNull(brokenAt(new SinglyNode<>('A')));
+    }
+
     private SinglyNode<Integer> sumReverse(SinglyNode<Integer> n1, SinglyNode<Integer> n2) {
         SinglyNode<Integer> n = null;
         if (n1 == null) {
@@ -190,14 +205,14 @@ public class TestChapter2_2 {
                     currentSum += n2.getData();
                     n2 = n2.getNext();
                 }
-                if(n == null){
+                if (n == null) {
                     n = new SinglyNode<>((currentSum + currentFraction) % 10);
                 } else {
                     n.appendToTail((currentSum + currentFraction) % 10);
                 }
                 currentFraction = (currentSum + currentFraction) / 10;
             }
-            if(currentFraction > 0){
+            if (currentFraction > 0) {
                 n.appendToTail(currentFraction);
             }
         }
@@ -225,16 +240,16 @@ public class TestChapter2_2 {
             }
         }
         int currentFraction = 0;
-        while (!st1.empty() || !st2.empty()){
+        while (!st1.empty() || !st2.empty()) {
             int currentSum = 0;
-            if(!st1.empty()){
-                currentSum+=st1.pop();
+            if (!st1.empty()) {
+                currentSum += st1.pop();
             }
-            if(!st2.empty()){
-                currentSum+=st2.pop();
+            if (!st2.empty()) {
+                currentSum += st2.pop();
             }
             SinglyNode<Integer> data = new SinglyNode<>((currentSum + currentFraction) % 10);
-            if(n == null){
+            if (n == null) {
                 n = data;
             } else {
                 data.setNext(n);
@@ -242,11 +257,30 @@ public class TestChapter2_2 {
             }
             currentFraction = (currentSum + currentFraction) / 10;
         }
-        if(currentFraction > 0){
+        if (currentFraction > 0) {
             SinglyNode<Integer> data = new SinglyNode<>(currentFraction);
             data.setNext(n);
             n = data;
         }
         return n;
+    }
+
+    private <T extends Comparable<T>> SinglyNode<T> brokenAt(SinglyNode<T> n) {
+        if (n == null) {
+            return null;
+        }
+        SinglyNode<T> current = n;
+        SinglyNode<T> runner = n.getNext();
+        while (current != null) {
+            current.setVisited(true);
+            if (runner != null && runner.isVisited()) {
+                return current;
+            }
+            current = current.getNext();
+            if (runner != null) {
+                runner = runner.getNext();
+            }
+        }
+        return null;
     }
 }

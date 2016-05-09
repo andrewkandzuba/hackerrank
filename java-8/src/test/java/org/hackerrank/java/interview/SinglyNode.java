@@ -6,22 +6,33 @@ import java.util.Set;
 public class SinglyNode<T extends Comparable<? super T>> {
     private T data;
     private SinglyNode<T> next;
+    private boolean visited;
 
     public SinglyNode(T d) {
         this.data = d;
+        this.visited = false;
     }
 
-    public void appendToTail(T data) {
+    public SinglyNode<T> appendToTail(T data) {
         SinglyNode<T> end = new SinglyNode<>(data);
         SinglyNode<T> n = this;
         while (n.next != null) {
             n = n.next;
         }
         n.next = end;
+        return end;
     }
 
     public T getData() {
         return data;
+    }
+
+    public boolean isVisited() {
+        return visited;
+    }
+
+    public void setVisited(boolean visited) {
+        this.visited = visited;
     }
 
     public SinglyNode<T> getNext() {
