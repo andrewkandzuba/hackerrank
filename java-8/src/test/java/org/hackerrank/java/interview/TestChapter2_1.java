@@ -6,6 +6,9 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
+/**
+ * Question: 2.4
+ */
 public class TestChapter2_1 {
     private final static Logger LOGGER = Logger.getLogger(TestChapter2.class.getName());
     private final static int LIST_LENGTH = 10000;
