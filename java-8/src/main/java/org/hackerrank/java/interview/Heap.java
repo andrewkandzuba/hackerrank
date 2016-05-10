@@ -11,10 +11,8 @@ public class Heap<T extends Comparable<? super T>> {
         buildHeap(0, array, array.length);
         int l = array.length;
         do {
-            T v = array[l - 1];
-            array[l - 1] = array[0];
-            array[0] = v;
-            reHeap(0, array, --l);
+            swap(0, --l, array);
+            reHeap(0, array, l);
         } while (l > 0);
         return array;
     }
@@ -33,30 +31,29 @@ public class Heap<T extends Comparable<? super T>> {
     private void reHeap(int parent, T[] array, int length) {
         int leftChildIndex = getLeftChildIndex(parent);
         int rightChildIndex = getRightChildIndex(parent);
-        if (leftChildIndex < length || rightChildIndex < length) {
-            if (array[leftChildIndex].compareTo(array[parent]) > 0) {
-                T v = array[leftChildIndex];
-                array[leftChildIndex] = array[parent];
-                array[parent] = v;
-                reHeap(leftChildIndex, array, length);
-            } else if (array[rightChildIndex].compareTo(array[parent]) > 0) {
-                T v = array[rightChildIndex];
-                array[rightChildIndex] = array[parent];
-                array[parent] = v;
-                reHeap(rightChildIndex, array, length);
-            }
+        if (leftChildIndex < length && array[leftChildIndex].compareTo(array[parent]) > 0) {
+            swap(parent,leftChildIndex, array);
+            reHeap(leftChildIndex, array, length);
+        }
+        if (rightChildIndex < length && array[rightChildIndex].compareTo(array[parent]) > 0) {
+            swap(parent, rightChildIndex, array);
+            reHeap(rightChildIndex, array, length);
         }
     }
 
     private void exchangeValue(int parent, int current, T[] array) {
         if (parent >= 0 && current >= 0) {
             if (array[current].compareTo(array[parent]) > 0) {
-                T v = array[current];
-                array[current] = array[parent];
-                array[parent] = v;
+                swap(parent, current, array);
                 exchangeValue(getParentIndex(parent), parent, array);
             }
         }
+    }
+
+    private void swap(int parent, int current, T[] array) {
+        T v = array[current];
+        array[current] = array[parent];
+        array[parent] = v;
     }
 
     private static int getParentIndex(int i) {
