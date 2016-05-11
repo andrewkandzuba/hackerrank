@@ -3,8 +3,15 @@ package org.hackerrank.java.interview;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
+import java.lang.management.RuntimeMXBean;
+import java.text.DecimalFormat;
 import java.util.Random;
-import java.util.concurrent.*;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class TestHeapSort {
     private final static int MAX_ARRAY_LENGTH = 10000;
@@ -15,6 +22,18 @@ public class TestHeapSort {
 
     @Test
     public void testHeapSort() throws Exception {
+        RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Up time (in milliseconds): ").append(runtimeMxBean.getUptime()).append("\n");
+        MemoryMXBean memoryMxBean = ManagementFactory.getMemoryMXBean();
+        MemoryUsage memUsage = memoryMxBean.getHeapMemoryUsage();
+        DecimalFormat df = new DecimalFormat("#0.00");
+        String smemUsed = df.format((double)memUsage.getUsed()/(1024 * 1024));
+        String smemMax = df.format((double)memUsage.getMax()/(1024 * 1024));
+        sb.append("Heap memory usage (in MB): ").append(smemUsed).append("/").append(smemMax);
+        sb.append("\n");
+
         long averageCalculationTime = 0;
         int numberOfTrial = 0;
         for (int i = 0; i < MAX_NUMBER_OF_TRIAL; i++) {
@@ -29,10 +48,19 @@ public class TestHeapSort {
             averageCalculationTime += mlsSpend;
             numberOfTrial++;
 
+            // Track memory usage
+            memUsage = memoryMxBean.getHeapMemoryUsage();
+            smemUsed = df.format((double) memUsage.getUsed() / (1024 * 1024));
+            smemMax = df.format((double) memUsage.getMax() / (1024 * 1024));
+            sb.append("Heap memory usage (in MB): ").append(smemUsed).append("/").append(smemMax);
+            sb.append(", time spent (mls): ").append(mlsSpend);
+            sb.append("\n");
+
             //Test array
             Assert.assertTrue(isArraySorted(array));
         }
-        System.out.printf("Average time of heapsort: %d mls", averageCalculationTime / numberOfTrial);
+        sb.append(String.format("Average time of heapsort: %d mls", averageCalculationTime / numberOfTrial));
+        System.out.print(sb.toString());
     }
 
     @Test
@@ -58,7 +86,6 @@ public class TestHeapSort {
         Assert.assertTrue(containsNegatives(array[0]));
         // Test array is sorted
         Assert.assertFalse(isArraySorted(array[0]));
-
     }
 
     private boolean containsNegatives(Integer[] integers) {
