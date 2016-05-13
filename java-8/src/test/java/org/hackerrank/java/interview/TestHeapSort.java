@@ -12,6 +12,7 @@ import java.util.Random;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class TestHeapSort {
     private final static int MAX_ARRAY_LENGTH = 10000;
@@ -72,19 +73,19 @@ public class TestHeapSort {
         }
         // Verify input data for negatives
         Assert.assertFalse(containsNegatives(array[0]));
+        // Run heap sort in the parallel thread.
+        Future<Integer[]> futureSort = service.schedule(() -> heap.heapSort(array[0]), 1000, TimeUnit.MILLISECONDS);
         // Replace random array's element value to negative.
         Future<Boolean> futureReplace = service.submit(() -> {
             array[0][randSequence.nextInt(MAX_ARRAY_LENGTH - 1)] = -1;
             return true;
         });
-        // Run heap sort in the parallel thread.
-        Future<Integer[]> futureSort = service.submit(() -> heap.heapSort(array[0]));
         while (!futureReplace.isDone() && !futureSort.isDone() ){
             Thread.sleep(1000);
         }
         // Negative element test
         Assert.assertTrue(containsNegatives(array[0]));
-        // Test array is sorted
+        //Test array
         Assert.assertFalse(isArraySorted(array[0]));
     }
 
