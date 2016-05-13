@@ -3,6 +3,9 @@ package org.hackerrank.java.interview;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ *
+ */
 class Profit {
     private int income;
     private int amount;
