@@ -6,9 +6,6 @@ public class TransactionManager {
     private static final ThreadLocal<String> context = new ThreadLocal<String>();
 
     public static void startTransaction() throws Exception {
-        if(context.get() != null){
-            throw new Exception("Transaction is in progress");
-        }
         context.set(UUID.randomUUID().toString());
     }
 
@@ -18,7 +15,7 @@ public class TransactionManager {
 
     public static void endTransaction() {
         //logic to end a transaction
-        //…
+        //ï¿½
         context.remove();
     }
 }
