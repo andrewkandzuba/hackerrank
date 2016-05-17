@@ -15,6 +15,11 @@
     <packaging>jar</packaging>
 
     <dependencies>
+        <!-- servlet api -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </dependency>
         <!-- testing -->
         <dependency>
             <groupId>junit</groupId>
