@@ -3,6 +3,10 @@ package org.hackerrank.java.interview.stardev;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.hackerrank.java.interview.stardev.Recursion2.groupSum;
+import static org.hackerrank.java.interview.stardev.Recursion2.groupSum6;
+import static org.hackerrank.java.interview.stardev.Recursion2.sumOf;
+
 public class TestRecursions {
 
     @Test
@@ -20,10 +24,10 @@ public class TestRecursions {
         Assert.assertFalse(groupSum6(0, new int[]{5, 6, 2}, 9));
         Assert.assertFalse(groupSum6(0, new int[]{5, 6, 2}, 7));
         Assert.assertFalse(groupSum6(0, new int[]{5, 2, 4, 6}, 9));
-        Assert.assertFalse(groupSum6(0, new int[]{}, 0));
+        Assert.assertTrue(groupSum6(0, new int[]{}, 0));
 
-        Assert.assertFalse(groupSum6(0, new int[]{2, 4, 8}, 10));
-        Assert.assertFalse(groupSum6(0, new int[]{2, 4, 8}, 14));
+        Assert.assertTrue(groupSum6(0, new int[]{2, 4, 8}, 10));
+        Assert.assertTrue(groupSum6(0, new int[]{2, 4, 8}, 14));
         Assert.assertFalse(groupSum6(0, new int[]{2, 4, 8}, 9));
 
         Assert.assertFalse(groupSum6(0, new int[]{2, 0, 7, 0, 6, 0, 0, 1, 6}, 8));
@@ -35,9 +39,9 @@ public class TestRecursions {
         Assert.assertFalse(groupSum6(0, new int[]{5, 6, 2}, 9));
         Assert.assertFalse(groupSum6(0, new int[]{5, 6, 2}, 7));
 
-        Assert.assertFalse(groupSum6(0, new int[]{1}, 1));
+        Assert.assertTrue(groupSum6(0, new int[]{1}, 1));
         Assert.assertFalse(groupSum6(0, new int[]{9}, 1));
-        Assert.assertFalse(groupSum6(0, new int[]{}, 0));
+        Assert.assertTrue(groupSum6(0, new int[]{}, 0));
 
         Assert.assertTrue(groupSum6(0, new int[]{3, 2, 4, 6}, 8));
         Assert.assertTrue(groupSum6(0, new int[]{6, 2, 4, 3}, 8));
@@ -55,31 +59,11 @@ public class TestRecursions {
 
     @Test
     public void testSum6() throws Exception {
-        Assert.assertEquals(6, sum6(0, new int[]{5, 6, 2}));
-        Assert.assertEquals(0, sum6(0, new int[]{2, 4, 8}));
-
-        Assert.assertEquals(12, sum6(0, new int[]{2, 0, 7, 0, 6, 0, 0, 1, 6}));
-        Assert.assertEquals(12, sum6(0, new int[]{5, 0, 6, 0, 0, 0, 0, 0, 6}));
-        Assert.assertEquals(18, sum6(0, new int[]{5, 0, 6, 0, 0, 0, 0, 0, 6, 12, 12, 0, 1, 6, 9}));
-    }
-
-
-    public boolean groupSum6(int start, int[] nums, int target) {
-        int sum6 = sum6(start, nums);
-        return sum6 > 0 && groupSum(start, nums, target - sum6);
-    }
-
-    public boolean groupSum(int start, int[] nums, int target) {
-        return target == 0
-                || start != nums.length
-                && (groupSum(start + 1, nums, target - nums[start])
-                || groupSum(start + 1, nums, target));
-    }
-
-    private int sum6(int start, int[] nums) {
-        if (start == nums.length)
-            return 0;
-        return sum6(start + 1, nums) + ((nums[start] == 6) ? nums[start] : 0);
+        Assert.assertEquals(6, sumOf(0, new int[]{5, 6, 2}, 6));
+        Assert.assertEquals(0, sumOf(0, new int[]{2, 4, 8}, 6));
+        Assert.assertEquals(12, sumOf(0, new int[]{2, 0, 7, 0, 6, 0, 0, 1, 6}, 6));
+        Assert.assertEquals(12, sumOf(0, new int[]{5, 0, 6, 0, 0, 0, 0, 0, 6}, 6));
+        Assert.assertEquals(18, sumOf(0, new int[]{5, 0, 6, 0, 0, 0, 0, 0, 6, 12, 12, 0, 1, 6, 9}, 6));
     }
 
 }
