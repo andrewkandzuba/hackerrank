@@ -10,10 +10,10 @@ public class Recursion2 {
             return (target == 0);
 
         if (nums[start] == 6)
-            return (groupSum6(start+1, nums, target-6));
+            return (groupSum6(start + 1, nums, target - 6));
         else
-            return groupSum6(start+1, nums, target) ||
-                    groupSum6(start+1, nums, target- nums[start]);
+            return groupSum6(start + 1, nums, target) ||
+                    groupSum6(start + 1, nums, target - nums[start]);
     }
 
     public static boolean groupSum(int start, int[] nums, int target) {
@@ -29,9 +29,63 @@ public class Recursion2 {
         return sumOf(start + 1, nums, value) + ((nums[start] == value) ? nums[start] : 0);
     }
 
+    public static boolean groupNoAdj(int start, int[] nums, int target) {
+        if (target < 0)
+            return false;
 
-    public static void main(String[] args){
-        boolean answer = groupSum6(0, new int[]{2, 4, 8}, 10);
-        System.out.println(answer);
+        if (start >= nums.length) {
+            return (target == 0);
+        }
+
+        return groupNoAdj(start + 2, nums, target) ||
+                groupNoAdj(start + 2, nums, target - nums[start])
+                || groupNoAdj(start + 1, nums, target);
+    }
+
+    public static boolean groupSum5(int start, int[] nums, int target) {
+        if (target < 0)
+            return false;
+
+        if (start >= nums.length) {
+            return (target == 0);
+        }
+
+        if (nums[start] % 5 == 0) {
+            if (start + 1 < nums.length && nums[start + 1] == 1) {
+                return (groupSum5(start + 2, nums, target - nums[start]));
+            } else {
+                return (groupSum5(start + 1, nums, target - nums[start]));
+            }
+        } else {
+            return groupSum5(start + 1, nums, target) ||
+                    groupSum5(start + 1, nums, target - nums[start]);
+        }
+    }
+
+    public static boolean groupSumClump(int start, int[] nums, int target) {
+        if (target < 0)
+            return false;
+
+        if (start >= nums.length) {
+            return (target == 0);
+        }
+
+        if (start + 1 < nums.length && nums[start + 1] == nums[start]) {
+            int extend = 0;
+            for(int i = start; i < nums.length; i++) {
+                if (nums[i] == nums[start]) {
+                    extend++;
+                }
+            }
+            return groupSumClump(start + extend, nums, target) ||
+                    groupSumClump(start + extend, nums, target - extend * nums[start]);
+        } else {
+            return groupSumClump(start + 1, nums, target) ||
+                    groupSumClump(start + 1, nums, target - nums[start]);
+        }
+    }
+
+    public boolean splitArray(int[] nums) {
+        return true;
     }
 }

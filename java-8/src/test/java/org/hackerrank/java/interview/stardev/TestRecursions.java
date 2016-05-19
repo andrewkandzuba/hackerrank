@@ -3,9 +3,7 @@ package org.hackerrank.java.interview.stardev;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.hackerrank.java.interview.stardev.Recursion2.groupSum;
-import static org.hackerrank.java.interview.stardev.Recursion2.groupSum6;
-import static org.hackerrank.java.interview.stardev.Recursion2.sumOf;
+import static org.hackerrank.java.interview.stardev.Recursion2.*;
 
 public class TestRecursions {
 
@@ -66,4 +64,43 @@ public class TestRecursions {
         Assert.assertEquals(18, sumOf(0, new int[]{5, 0, 6, 0, 0, 0, 0, 0, 6, 12, 12, 0, 1, 6, 9}, 6));
     }
 
+    @Test
+    public void testGroupNoAdj() throws Exception {
+        Assert.assertTrue(groupNoAdj(0, new int[]{2, 5, 10, 4}, 12));
+        Assert.assertFalse(groupNoAdj(0, new int[]{2, 5, 10, 4}, 14));
+        Assert.assertFalse(groupNoAdj(0, new int[]{2, 5, 10, 4}, 7));
+        Assert.assertTrue(groupNoAdj(0, new int[]{2, 4, 5, 10, 4}, 14));
+
+        Assert.assertTrue(groupNoAdj(0, new int[]{}, 0));
+        Assert.assertTrue(groupNoAdj(0, new int[]{1}, 1));
+        Assert.assertTrue(groupNoAdj(0, new int[]{2, 1, 0}, 2));
+        Assert.assertTrue(groupNoAdj(0, new int[]{1}, 0));
+    }
+
+    @Test
+    public void testSum5() throws Exception {
+        Assert.assertTrue(groupSum5(0, new int[]{2, 5, 10, 4}, 19));
+        Assert.assertTrue(groupSum5(0, new int[]{2, 5, 10, 4}, 17));
+        Assert.assertFalse(groupSum5(0, new int[]{2, 5, 10, 4}, 12));
+        Assert.assertTrue(groupSum5(0, new int[]{22, 5, 1, 10, 23, 1, 34}, 16));
+        Assert.assertFalse(groupSum5(0, new int[]{22, 5, 1, 10, 23, 23, 34}, 16));
+        Assert.assertTrue(groupSum5(0, new int[]{22, 5, 23, 1, 10, 23, 1, 34}, 16));
+        Assert.assertFalse(groupSum5(0, new int[]{3, 5, 1}, 9));
+    }
+
+
+    @Test
+    public void testSumClump() throws Exception {
+        Assert.assertTrue(groupSumClump(0, new int[]{2, 4, 8}, 10));
+        Assert.assertTrue(groupSumClump(0, new int[]{1, 2, 4, 8, 1}, 14));
+        Assert.assertFalse(groupSumClump(0, new int[]{2, 4, 4, 8}, 14));
+        Assert.assertTrue(groupSumClump(0, new int[]{0, 4, 4, 0, 4, 4, 4}, 0));
+        Assert.assertTrue(groupSumClump(0, new int[]{4, 4}, 0));
+        Assert.assertTrue(groupSumClump(0, new int[]{4, 4}, 8));
+    }
+
+    @Test
+    public void testSplitArray() throws Exception {
+
+    }
 }
