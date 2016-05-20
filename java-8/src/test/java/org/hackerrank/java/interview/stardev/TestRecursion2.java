@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import static org.hackerrank.java.interview.stardev.Recursion2.*;
 
-public class TestRecursions {
+public class TestRecursion2 {
 
     @Test
     public void testBacktrackingRecursionProblem() throws Exception {
