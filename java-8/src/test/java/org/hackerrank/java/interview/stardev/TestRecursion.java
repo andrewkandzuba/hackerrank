@@ -60,4 +60,13 @@ public class TestRecursion {
         Assert.assertTrue(sumDigits(49) == 13);
         Assert.assertTrue(sumDigits(12) == 3);
     }
+
+
+    @Test
+    public void testCount7() throws Exception {
+        Assert.assertTrue(count7(717) == 2);
+        Assert.assertTrue(count7(7) == 1);
+        Assert.assertTrue(count7(123) == 0);
+        Assert.assertTrue(count7(70070) == 2);
+    }
 }

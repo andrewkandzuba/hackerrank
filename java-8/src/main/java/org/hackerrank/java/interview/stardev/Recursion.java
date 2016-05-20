@@ -34,16 +34,24 @@ public class Recursion {
     }
 
     public static int triangle(int rows) {
-        if(rows == 0){
+        if (rows == 0) {
             return 0;
         }
         return rows + triangle(rows - 1);
     }
 
     public static int sumDigits(int n) {
-        if(n / 10 == 0){
-           return n;
+        if (n / 10 == 0) {
+            return n;
         }
         return n % 10 + sumDigits(n / 10);
     }
+
+    public static int count7(int n) {
+        if (n == 0) {
+            return 0;
+        }
+        return ((n % 10 == 7) ? 1 : 0) + count7(n / 10);
+    }
+
 }
