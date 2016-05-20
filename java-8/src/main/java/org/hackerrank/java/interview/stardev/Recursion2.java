@@ -101,12 +101,42 @@ public class Recursion2 {
                 findEquals(start + 1, nums, target, total);
     }
 
-    private static int sumInterval(int start, int end, int[] nums) {
+    public static boolean splitOdd10(int[] nums) {
         int total = 0;
-        for (int i = start; i < end; i++) {
-            total += nums[i];
-        }
-        return total;
+        for (int i : nums) total += i;
+        return findOdd10(0, nums, 0, total);
     }
 
+    private static boolean findOdd10(int start, int[] nums, int target, int total) {
+        if (start >= nums.length) {
+            int remain = (total - target);
+            return (target % 10 == 0 && remain % 2 > 0) ||
+                    (target % 2 > 0 && remain % 10 == 0);
+        }
+        return findOdd10(start + 1, nums, target + nums[start], total) ||
+                findOdd10(start + 1, nums, target, total);
+    }
+
+    public static boolean split53(int[] nums) {
+        int total = 0;
+        for (int i : nums) {
+            total += i;
+        }
+        return find35(0, nums, 0, 0, 0, total);
+    }
+
+    private static boolean find35(int start, int[] nums, int target, int target3, int target5, int total) {
+        if (start >= nums.length)
+            return (2 * (target + target3) - total) == 0 || (2 * (target + target5) == total);
+
+        if (nums[start] % 5 == 0) {
+            return find35(start + 1, nums, target, target3, target5 + nums[start], total);
+        }
+        if (nums[start] % 3 == 0 && nums[start] % 5 > 0) {
+            return find35(start + 1, nums, target, target3 + nums[start], target5, total);
+        } else {
+            return find35(start + 1, nums, target + nums[start], target3, target5, total) ||
+                    find35(start + 1, nums, target, target3, target5, total);
+        }
+    }
 }

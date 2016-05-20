@@ -110,4 +110,29 @@ public class TestRecursions {
         Assert.assertFalse(splitArray(new int[]{5, 1, 1, 0, 4}));
         Assert.assertTrue(splitArray(new int[]{1, 1, 1, 0, 3}));
     }
+
+    @Test
+    public void testSplitOdd10() throws Exception {
+        Assert.assertFalse(splitOdd10(new int[]{}));
+        Assert.assertTrue(splitOdd10(new int[]{1}));
+        Assert.assertTrue(splitOdd10(new int[]{5, 5, 5}));
+        Assert.assertFalse(splitOdd10(new int[]{5, 5, 6}));
+        Assert.assertTrue(splitOdd10(new int[]{5, 5, 6, 1}));
+        Assert.assertFalse(splitOdd10(new int[]{5, 0, 1, 0, 4}));
+        Assert.assertTrue(splitOdd10(new int[]{5, 1, 1, 0, 4}));
+        Assert.assertFalse(splitOdd10(new int[]{1, 1, 1, 0, 3}));
+    }
+
+    @Test
+    public void testSplit53() throws Exception {
+        Assert.assertTrue(split53(new int[]{}));
+        Assert.assertFalse(split53(new int[]{1}));
+        Assert.assertTrue(split53(new int[]{1, 1}));
+        Assert.assertFalse(split53(new int[]{1, 1, 1}));
+        Assert.assertTrue(split53(new int[]{2, 4, 2}));
+        Assert.assertTrue(split53(new int[]{5, 3, 3, 5, 5, 5, 3, 3, 3, 3, 3, 3, 3, 5, 5, 3}));
+        Assert.assertFalse(split53(new int[]{5, 1, 1, 0, 4}));
+        Assert.assertFalse(split53(new int[]{3, 5, 8}));
+        Assert.assertTrue(split53(new int[]{1, 1, 1, 0, 3}));
+    }
 }
