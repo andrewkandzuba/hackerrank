@@ -101,6 +101,13 @@ public class TestRecursions {
 
     @Test
     public void testSplitArray() throws Exception {
-
+        Assert.assertTrue(splitArray(new int[]{}));
+        Assert.assertFalse(splitArray(new int[]{1}));
+        Assert.assertTrue(splitArray(new int[]{2, 2}));
+        Assert.assertFalse(splitArray(new int[]{2, 3}));
+        Assert.assertTrue(splitArray(new int[]{5, 2, 3}));
+        Assert.assertTrue(splitArray(new int[]{5, 0, 1, 0, 4}));
+        Assert.assertFalse(splitArray(new int[]{5, 1, 1, 0, 4}));
+        Assert.assertTrue(splitArray(new int[]{1, 1, 1, 0, 3}));
     }
 }

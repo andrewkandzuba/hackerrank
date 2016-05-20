@@ -72,7 +72,7 @@ public class Recursion2 {
 
         if (start + 1 < nums.length && nums[start + 1] == nums[start]) {
             int extend = 0;
-            for(int i = start; i < nums.length; i++) {
+            for (int i = start; i < nums.length; i++) {
                 if (nums[i] == nums[start]) {
                     extend++;
                 }
@@ -85,7 +85,28 @@ public class Recursion2 {
         }
     }
 
-    public boolean splitArray(int[] nums) {
-        return true;
+
+    public static boolean splitArray(int[] nums) {
+        int total = 0;
+        for (int i : nums) total += i;
+        return findEquals(0, nums, 0, total);
     }
+
+
+    private static boolean findEquals(int start, int[] nums, int target, int total) {
+        if (start >= nums.length)
+            return (total - 2 * target == 0);
+
+        return findEquals(start + 1, nums, target + nums[start], total) ||
+                findEquals(start + 1, nums, target, total);
+    }
+
+    private static int sumInterval(int start, int end, int[] nums) {
+        int total = 0;
+        for (int i = start; i < end; i++) {
+            total += nums[i];
+        }
+        return total;
+    }
+
 }
