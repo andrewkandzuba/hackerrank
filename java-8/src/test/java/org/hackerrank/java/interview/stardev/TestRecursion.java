@@ -126,7 +126,7 @@ public class TestRecursion {
         Assert.assertTrue(strDist("catcowcat", "cow") == 3);
         Assert.assertTrue(strDist("cccatcowcatxx", "cat") == 9);
 
-        Assert.assertTrue(strDist("catcowcatxxxcatsdfsdfsdfsdffsdcat", "cat") == 21);
+        Assert.assertTrue(strDist("catcowcatxxxcatsdfsdfsdfsdffsdcat", "cat") == 33);
 
         Assert.assertTrue(strDist("xxcatxx", "cat") == 3);
         Assert.assertTrue(strDist("catxx", "cat") == 3);
@@ -134,5 +134,7 @@ public class TestRecursion {
         Assert.assertTrue(strDist("xxxxxxx", "cat") == 0);
 
         Assert.assertTrue(strDist("abccatcowcatcatxyz", "cat") == 12);
+
+        Assert.assertTrue(strDist("hiHellohihihi", "hih") == 5);
     }
 }

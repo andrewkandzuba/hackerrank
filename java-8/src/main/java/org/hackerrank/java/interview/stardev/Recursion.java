@@ -109,21 +109,18 @@ public class Recursion {
     }
 
     public static int strDist(String str, String sub) {
-        return strDist(str, sub, 0);
+        int first = str.indexOf(sub);
+        return (first != -1) ? findLast(str, sub, first + 1, first) - first + sub.length() : 0;
     }
 
-    private static int strDist(String str, String sub, int accumulated) {
-        if (sub.length() > str.length()) {
-            return accumulated;
+    private static int findLast(String str, String sub, int current, int last) {
+        if (sub.length() > str.substring(current).length()) {
+            return last;
         }
-        int subStart = str.indexOf(sub);
-        if (str.startsWith(sub)) {
-            return strDist(
-                    str.substring(subStart + sub.length()),
-                    sub,
-                    accumulated + subStart + sub.length());
+        if (str.substring(current).startsWith(sub)) {
+            return findLast(str, sub, current + 1, current);
         } else {
-            return strDist(str.substring(1), sub, accumulated);
+            return findLast(str, sub, current + 1, last);
         }
     }
 }
