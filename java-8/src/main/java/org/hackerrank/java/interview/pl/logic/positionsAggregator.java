@@ -20,6 +20,4 @@ public final class PositionsAggregator {
         double measured = coefficient / NAV;
         return measured > 0.15 && measured < 0.25;
     }
-
-    //b)	( SUM(LMV) where Asset Type In ("CORPORATE BOND","GOVERNMENT BOND") /NAV ) IS BETWEEN 15% AND 25%
 }
