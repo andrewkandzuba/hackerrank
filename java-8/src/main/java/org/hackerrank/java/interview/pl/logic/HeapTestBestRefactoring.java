@@ -2,7 +2,7 @@ package org.hackerrank.java.interview.pl.logic;
 
 import java.util.*;
 
-public class HeapRefactoredTest {
+public class HeapTestBestRefactoring {
     private static class AddFunction {
         static int calc(int x, int y) {
             return x + y;
@@ -32,7 +32,7 @@ public class HeapRefactoredTest {
             int x = rn.nextInt(RANDOM_SIZE);
             int y = rn.nextInt(RANDOM_SIZE);
 
-            int z = HeapRefactoredTest.AddFunction.calc(x, y);
+            int z = HeapTestBestRefactoring.AddFunction.calc(x, y);
             String result = x + "+" + y + "=" + z;
             results.add(result);
         }
