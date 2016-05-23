@@ -54,4 +54,70 @@ public class Recursion {
         return ((n % 10 == 7) ? 1 : 0) + count7(n / 10);
     }
 
+    public static int count8(int n) {
+        if (n == 0) {
+            return 0;
+        }
+
+        int left = n / 10;
+        boolean is8 = n % 10 == 8;
+        boolean isLeft8 = (left % 10) == 8;
+
+        return (isLeft8 ? 2 : 1) * (is8 ? 1 : 0) + count8(left);
+    }
+
+    public static int powerN(int base, int n) {
+        if (base == 0) {
+            return 0;
+        }
+        if (n == 0) {
+            return 1;
+        }
+        return base * powerN(base, n - 1);
+    }
+
+    public static int countX(String str) {
+        return countX(0, str.toCharArray());
+    }
+
+    private static int countX(int start, char[] array) {
+        if (start >= array.length) {
+            return 0;
+        }
+        return (array[start] == 'x' ? 1 : 0) + countX(start + 1, array);
+    }
+
+    public static int countHi(String str) {
+        return countHi(0, str.toCharArray());
+    }
+
+    private static int countHi(int start, char[] array) {
+        if (start >= array.length) {
+            return 0;
+        }
+        if (array[start] == 'h' && start + 1 < array.length && array[start + 1] == 'i') {
+            return 1 + countHi(start + 2, array);
+        }
+        return countHi(start + 1, array);
+    }
+
+    public static String changeXY(String str) {
+        if (str.length() == 0) {
+            return "";
+        }
+        return (str.charAt(0) == 'x' ? "y" : str.substring(0, 1)) + changeXY(str.substring(1));
+    }
+
+    public static int strDist(String str, String sub) {
+        if(sub.length() > str.length()){
+            return 0;
+        }
+        int subStart = str.indexOf(sub);
+        int subEnd = str.indexOf(sub, sub.length());
+
+        if(subStart != -1 && subEnd != -1){
+            return Math.max(subEnd - subStart + sub.length(), strDist(str.substring(subEnd), sub));
+        }
+        return strDist(str.substring(1), sub);
+    }
 }

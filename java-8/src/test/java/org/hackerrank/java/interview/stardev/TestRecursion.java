@@ -69,4 +69,70 @@ public class TestRecursion {
         Assert.assertTrue(count7(123) == 0);
         Assert.assertTrue(count7(70070) == 2);
     }
+
+    @Test
+    public void testCount8() throws Exception {
+        Assert.assertTrue(count8(8) == 1);
+        Assert.assertTrue(count8(818) == 2);
+        Assert.assertTrue(count8(8818) == 4);
+        Assert.assertTrue(count8(80080) == 2);
+        Assert.assertTrue(count8(88081) == 4);
+        Assert.assertTrue(count8(8888) == 7);
+    }
+
+    @Test
+    public void testPowerN() throws Exception {
+        Assert.assertTrue(powerN(3, 1) == 3);
+        Assert.assertTrue(powerN(3, 2) == 9);
+        Assert.assertTrue(powerN(3, 3) == 27);
+        Assert.assertTrue(powerN(4, 4) == 256);
+        Assert.assertTrue(powerN(0, 10) == 0);
+        Assert.assertTrue(powerN(10, 0) == 1);
+    }
+
+    @Test
+    public void testCountX() throws Exception {
+        Assert.assertTrue(countX("xxhixx") == 4);
+        Assert.assertTrue(countX("xhixhix") == 3);
+        Assert.assertTrue(countX("XXHIXX") == 0);
+        Assert.assertTrue(countX("hi") == 0);
+    }
+
+    @Test
+    public void testCountHi() throws Exception {
+        Assert.assertTrue(countHi("xxhixx") == 1);
+        Assert.assertTrue(countHi("xhixhix") == 2);
+        Assert.assertTrue(countHi("XXHIXX") == 0);
+        Assert.assertTrue(countHi("hi") == 1);
+        Assert.assertTrue(countHi("Hi") == 0);
+        Assert.assertTrue(countHi("hI") == 0);
+        Assert.assertTrue(countHi("HI") == 0);
+        Assert.assertTrue(countHi("hihi") == 2);
+        Assert.assertTrue(countHi("xhihi") == 2);
+        Assert.assertTrue(countHi("HIhihi") == 2);
+    }
+
+    @Test
+    public void testChangeXY() throws Exception {
+        Assert.assertTrue(changeXY("codex").equals("codey"));
+        Assert.assertTrue(changeXY("xxhixx").equals("yyhiyy"));
+        Assert.assertTrue(changeXY("XXHIXX").equals("XXHIXX"));
+        Assert.assertTrue(changeXY("xhixhix").equals("yhiyhiy"));
+    }
+
+    @Test
+    public void testStrDist() throws Exception {
+        Assert.assertTrue(strDist("catcowcat", "cat") == 9);
+        Assert.assertTrue(strDist("catcowcat", "cow") == 3);
+        Assert.assertTrue(strDist("cccatcowcatxx", "cat") == 9);
+
+        Assert.assertTrue(strDist("catcowcatxxxcatsdfsdfsdfsdffsdcat", "cat") == 21);
+
+        Assert.assertTrue(strDist("xxcatxx", "cat") == 0);
+        Assert.assertTrue(strDist("catxx", "cat") == 0);
+        Assert.assertTrue(strDist("catxx", "cat") == 0);
+        Assert.assertTrue(strDist("xxxxxxx", "cat") == 0);
+
+        Assert.assertTrue(strDist("abccatcowcatcatxyz", "cat") == 12);
+    }
 }
