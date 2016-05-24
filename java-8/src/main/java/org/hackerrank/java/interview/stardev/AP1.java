@@ -33,14 +33,40 @@ public class AP1 {
     }
 
     public static int scores100(int start, int[] scores, int counter) {
-        if(start >= scores.length){
+        if (start >= scores.length) {
             return counter;
         }
 
-        if(scores[start] == 100 && start + 1 < scores.length && scores[start + 1] == 100){
+        if (scores[start] == 100 && start + 1 < scores.length && scores[start + 1] == 100) {
             return scores100(start + 1, scores, counter + 1);
         }
         return scores100(start + 1, scores, counter);
     }
 
+    public static boolean scoresClump(int[] scores) {
+        return scoresClump(0, scores, 0) >= 3;
+    }
+
+    public static int scoresClump(int start, int[] scores, int counter) {
+        if (start >= scores.length) {
+            return counter;
+        }
+
+        if (start + 2 < scores.length
+                && scores[start + 1] - scores[start] <= 2
+                && scores[start + 2] - scores[start + 1] <= 2
+                && scores[start + 2] - scores[start] <= 2) {
+            return scoresClump(start + 1, scores, counter + 3);
+        }
+        return scoresClump(start + 1, scores, counter);
+    }
+
+    public static int scoresAverage(int[] scores) {
+        return Math.max(average(scores, 0, scores.length / 2), average(scores, scores.length / 2, scores.length));
+    }
+
+
+    private static int average(int[] scores, int start, int end) {
+        return 0;
+    }
 }

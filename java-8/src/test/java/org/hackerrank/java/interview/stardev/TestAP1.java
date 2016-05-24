@@ -5,6 +5,8 @@ import org.junit.Test;
 
 import static org.hackerrank.java.interview.stardev.AP1.scoresIncreasing;
 import static org.hackerrank.java.interview.stardev.AP1.scores100;
+import static org.hackerrank.java.interview.stardev.AP1.scoresClump;
+import static org.hackerrank.java.interview.stardev.AP1.scoresAverage;
 
 public class TestAP1 {
 
@@ -24,5 +26,19 @@ public class TestAP1 {
         Assert.assertTrue(scores100(new int[]{1, 100, 100}));
         Assert.assertFalse(scores100(new int[]{1, 100, 99, 100}));
         Assert.assertTrue(scores100(new int[]{100, 1, 100, 100}));
+    }
+
+    @Test
+    public void testScoresClump() throws Exception {
+        Assert.assertTrue(scoresClump(new int[]{3, 4, 5}));
+        Assert.assertFalse(scoresClump(new int[]{3, 4, 6}));
+        Assert.assertTrue(scoresClump(new int[]{1, 3, 5, 5}));
+    }
+
+    @Test
+    public void testScoresAverage() throws Exception {
+        Assert.assertTrue(scoresAverage(new int[]{2, 2, 4, 4}) == 4);
+        Assert.assertTrue(scoresAverage(new int[]{4, 4, 4, 2, 2, 2}) == 4);
+        Assert.assertTrue(scoresAverage(new int[]{3, 4, 5, 1, 2, 3}) == 4);
     }
 }
