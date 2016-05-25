@@ -61,5 +61,8 @@ public class TestString3 {
         Assert.assertEquals(mirrorEnds("abXYZba"), "ab");
         Assert.assertEquals(mirrorEnds("abca"), "a");
         Assert.assertEquals(mirrorEnds("aba"), "aba");
+        Assert.assertEquals(mirrorEnds("a"), "a");
+        Assert.assertEquals(mirrorEnds("ag"), "");
+        Assert.assertEquals(mirrorEnds(""), "");
     }
 }

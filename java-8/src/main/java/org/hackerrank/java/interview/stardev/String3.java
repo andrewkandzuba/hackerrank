@@ -59,16 +59,16 @@ public class String3 {
     }
 
     private static boolean gHappy(String str, boolean isHappy) {
-        if(str.length() == 0){
+        if (str.length() == 0) {
             return isHappy;
         }
 
-        if(str.startsWith("g")){
+        if (str.startsWith("g")) {
             int i = 1;
-            while (i < str.length() && str.charAt(i) == 'g'){
+            while (i < str.length() && str.charAt(i) == 'g') {
                 i++;
             }
-            if(i > 1){
+            if (i > 1) {
                 return gHappy(str.substring(i), true);
             } else {
                 return gHappy(str.substring(i), false);
@@ -78,26 +78,22 @@ public class String3 {
     }
 
     public static int countTriple(String str) {
-        if(str.length() == 0){
+        if (str.length() == 0) {
             return 0;
         }
-        if(str.length() >= 3 && str.charAt(0) == str.charAt(1) && str.charAt(1) == str.charAt(2)){
+        if (str.length() >= 3 && str.charAt(0) == str.charAt(1) && str.charAt(1) == str.charAt(2)) {
             return 1 + countTriple(str.substring(1));
         }
         return countTriple(str.substring(1));
     }
 
     public static String mirrorEnds(String string) {
-        if(string.length() == 0){
-            return "";
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < string.length() && string.charAt(i) == string.charAt(string.length() - i - 1); i++) {
+            sb.append(string.charAt(i));
         }
-        if(string.length() == 1){
-            return string;
-        }
-        if(string.charAt(0) == string.charAt(string.length() - 1)){
-            return string.charAt(0) + mirrorEnds(string.substring(1, string.length() - 1));
-        }
-        return "";
+        return sb.toString();
     }
+
 
 }
