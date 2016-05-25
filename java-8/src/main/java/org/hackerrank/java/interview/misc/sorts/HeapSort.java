@@ -1,8 +1,9 @@
-package org.hackerrank.java.interview;
+package org.hackerrank.java.interview.misc.sorts;
 
-public class Heap<T extends Comparable<? super T>> {
+public class HeapSort<T extends Comparable<? super T>> implements Sort<T> {
 
-    public T[] heapSort(T[] array) {
+    @Override
+    public T[] sort(T[] array) {
         // Nothing to sort
         if (array.length == 0 || array.length == 1) {
             return array;

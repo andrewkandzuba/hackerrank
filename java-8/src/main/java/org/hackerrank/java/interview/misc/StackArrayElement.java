@@ -1,4 +1,4 @@
-package org.hackerrank.java.interview;
+package org.hackerrank.java.interview.misc;
 
 public class StackArrayElement {
     private int index;

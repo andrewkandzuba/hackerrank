@@ -1,4 +1,4 @@
-package org.hackerrank.java.interview;
+package org.hackerrank.java.interview.misc;
 
 public class DoublyNode<T extends Comparable<? super T>> {
     private T data;

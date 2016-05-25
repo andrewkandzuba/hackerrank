@@ -1,5 +1,6 @@
-package org.hackerrank.java.interview;
+package org.hackerrank.java.interview.misc;
 
+import org.hackerrank.java.interview.misc.sorts.HeapSort;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -14,11 +15,13 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import static org.hackerrank.java.interview.misc.sorts.SortUtils.*;
+
 public class TestHeapSort {
     private final static int MAX_ARRAY_LENGTH = 10000;
     private final static int MAX_NUMBER_OF_TRIAL = 100;
     private final static Random randSequence = new Random();
-    private final static Heap<Integer> heap = new Heap<>();
+    private final static HeapSort<Integer> HEAP_SORT = new HeapSort<>();
     private final ScheduledExecutorService service = new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors() * 2);
 
     @Test
@@ -32,7 +35,7 @@ public class TestHeapSort {
         DecimalFormat df = new DecimalFormat("#0.00");
         String smemUsed = df.format((double)memUsage.getUsed()/(1024 * 1024));
         String smemMax = df.format((double)memUsage.getMax()/(1024 * 1024));
-        sb.append("Heap memory usage (in MB): ").append(smemUsed).append("/").append(smemMax);
+        sb.append("HeapSort memory usage (in MB): ").append(smemUsed).append("/").append(smemMax);
         sb.append("\n");
 
         long averageCalculationTime = 0;
@@ -44,7 +47,7 @@ public class TestHeapSort {
             // build a tree
 
             long timeStamp = System.currentTimeMillis();
-            array = heap.heapSort(array);
+            array = HEAP_SORT.sort(array);
             long mlsSpend = System.currentTimeMillis() - timeStamp;
             averageCalculationTime += mlsSpend;
             numberOfTrial++;
@@ -53,7 +56,7 @@ public class TestHeapSort {
             memUsage = memoryMxBean.getHeapMemoryUsage();
             smemUsed = df.format((double) memUsage.getUsed() / (1024 * 1024));
             smemMax = df.format((double) memUsage.getMax() / (1024 * 1024));
-            sb.append("Heap memory usage (in MB): ").append(smemUsed).append("/").append(smemMax);
+            sb.append("HeapSort memory usage (in MB): ").append(smemUsed).append("/").append(smemMax);
             sb.append(", time spent (mls): ").append(mlsSpend);
             sb.append("\n");
 
@@ -73,8 +76,8 @@ public class TestHeapSort {
         }
         // Verify input data for negatives
         Assert.assertFalse(containsNegatives(array[0]));
-        // Run heap sort in the parallel thread.
-        Future<Integer[]> futureSort = service.schedule(() -> heap.heapSort(array[0]), 1000, TimeUnit.MILLISECONDS);
+        // Run HEAP_SORT sort in the parallel thread.
+        Future<Integer[]> futureSort = service.schedule(() -> HEAP_SORT.sort(array[0]), 1000, TimeUnit.MILLISECONDS);
         // Replace random array's element value to negative.
         Future<Boolean> futureReplace = service.submit(() -> {
             array[0][randSequence.nextInt(MAX_ARRAY_LENGTH - 1)] = -1;
@@ -87,39 +90,6 @@ public class TestHeapSort {
         Assert.assertTrue(containsNegatives(array[0]));
         //Test array
         Assert.assertFalse(isArraySorted(array[0]));
-    }
-
-    private boolean containsNegatives(Integer[] integers) {
-        int negativeCount = 0;
-        for(int i = 0; i < MAX_ARRAY_LENGTH; i++){
-            if(integers[i] < 0) {
-                negativeCount++;
-            }
-        }
-        return (negativeCount > 0);
-    }
-
-    private static Integer[] generateArrayOfSize(int length) {
-        Integer[] array = new Integer[length];
-        for (int i = 0; i < length; i++) {
-            array[i] = randSequence.nextInt(100);
-        }
-        return array;
-    }
-
-    private boolean isArraySorted(Integer[] array) {
-        if (array.length == 0 || array.length == 1) {
-            return true;
-        }
-        int maxMet = array[0];
-        for (int i : array) {
-            if (i < maxMet) {
-                return false;
-            } else if (i > maxMet) {
-                maxMet = i;
-            }
-        }
-        return true;
     }
 
     @Test
