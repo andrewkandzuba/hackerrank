@@ -24,6 +24,10 @@ public class TestString3 {
         Assert.assertTrue(countYZ("DAY abc XYZ") == 2);
         Assert.assertTrue(countYZ("y2bz") == 2);
         Assert.assertTrue(countYZ("zxyx") == 0);
+
+        Assert.assertTrue(countYZ("fez day") == 2);
+        Assert.assertTrue(countYZ("day fez") == 2);
+        Assert.assertTrue(countYZ("day fyyyz") == 2);
     }
 
     @Test
