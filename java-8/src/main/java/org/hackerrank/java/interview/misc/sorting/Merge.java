@@ -1,4 +1,4 @@
-package org.hackerrank.java.interview.misc.sorts;
+package org.hackerrank.java.interview.misc.sorting;
 
 public class Merge<T extends Comparable<? super T>> implements Sort<T>  {
 

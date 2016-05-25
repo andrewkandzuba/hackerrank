@@ -1,4 +1,4 @@
-package org.hackerrank.java.interview.misc.sorts;
+package org.hackerrank.java.interview.misc.sorting;
 
 import java.util.Random;
 

@@ -1,4 +1,4 @@
-package org.hackerrank.java.interview.jcp;
+package org.hackerrank.java.interview.jcp.badcases;
 
 import org.junit.Assert;
 import org.junit.Test;
