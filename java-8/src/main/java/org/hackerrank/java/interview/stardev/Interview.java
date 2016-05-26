@@ -17,34 +17,36 @@ public class Interview {
     }
 
     public static int maxMirror(int[] nums) {
-        int maxLength = 0;
-        for (int i = 1; i < nums.length; i++) {
-            if (findMirrorOfLength(i, nums)) {
-                maxLength = i;
-            }
-        }
-        return maxLength;
+        return findMirrorOfLength(nums.length, nums);
     }
 
-    private static boolean findMirrorOfLength(int groupLength, int num[]) {
-         boolean isFound = false;
-         for(int i = 0; i < num.length - groupLength + 1; i++){
-              isFound |=  findMirrow(0, num, i, groupLength);
-         }
-        return isFound;
+    private static int findMirrorOfLength(int groupLength, int nums[]) {
+        if (groupLength == 0) {
+            return 0;
+        }
+        if (findMirrow(nums, groupLength)) {
+            return groupLength;
+        }
+        return findMirrorOfLength(groupLength - 1, nums);
     }
 
-    private static boolean findMirrow(int start, int num[], int groupStart, int groupLength){
-        if(start + groupLength >= num.length || groupStart >= num.length){
-            return true;
-        }
-
-        boolean isFound = true;
-        for(int i = groupLength; i > 0; i--){
-            if(num[start + groupLength - i] != num[groupStart + i - 1]){
-                isFound = false;
+    private static boolean findMirrow(int nums[], int gl) {
+        for(int gs = 0; gs <= nums.length - gl; gs++){
+            for(int cp = 0; cp <= nums.length - gl; cp++){
+                if (isMirrorOf(cp, nums, gs, gl)) {
+                    return true;
+                }
             }
         }
-        return isFound || findMirrow(start + 1, num, groupStart, groupLength);
+        return false;
+    }
+
+    private static boolean isMirrorOf(int cp, int nums[], int gs, int gl) {
+        for (int i = 0; i < gl; i++) {
+            if (nums[cp + i] != nums[gs + gl - i - 1]) {
+                return false;
+            }
+        }
+        return true;
     }
 }
