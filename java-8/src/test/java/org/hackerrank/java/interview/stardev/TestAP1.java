@@ -35,7 +35,7 @@ public class TestAP1 {
         Assert.assertTrue(scoresClump(new int[]{1, 3, 5, 5}));
     }
 
-    //@Test
+    @Test
     public void testScoresAverage() throws Exception {
         Assert.assertTrue(scoresAverage(new int[]{2, 2, 4, 4}) == 4);
         Assert.assertTrue(scoresAverage(new int[]{4, 4, 4, 2, 2, 2}) == 4);
