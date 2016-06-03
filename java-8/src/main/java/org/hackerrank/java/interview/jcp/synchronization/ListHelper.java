@@ -1,7 +1,6 @@
 package org.hackerrank.java.interview.jcp.synchronization;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ScheduledExecutorService;
@@ -10,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class ListHelper<E>  {
-    private final List<E> list = Collections.synchronizedList(new ArrayList<E>());
+    private final List<E> list = new ArrayList<E>();
 
     public void add(E e){
         synchronized (list){
