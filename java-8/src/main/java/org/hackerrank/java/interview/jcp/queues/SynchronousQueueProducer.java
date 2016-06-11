@@ -25,10 +25,10 @@ public class SynchronousQueueProducer implements Runnable {
             while (true) {
                 String m = String.format("message-%s", random.nextInt(1024));
                 if (queue.offer(m, 5000, TimeUnit.MILLISECONDS)) {
-                    System.out.println(String.format("Thread [%s] has sent a message: [%s]", threadId.get(), m));
+                    System.out.println(String.format("[Thread %s] has sent a message: [%s]", threadId.get(), m));
                     continue;
                 }
-                System.out.println(String.format("Thread [%s] has not sent a message due to the lack of the capacity", threadId.get()));
+                System.out.println(String.format("[Thread-%s] has not sent a message due to the lack of the capacity", threadId.get()));
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

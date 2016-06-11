@@ -22,7 +22,7 @@ public class SynchronousQueueConsumer implements Runnable {
         try {
             while (true) {
                 String m = queue.take();
-                System.out.println(String.format("Thread [%s] has recived a message: [%s]", threadId.get(), m));
+                System.out.println(String.format("[Thread-%s] has received a message: [%s]", threadId.get(), m));
                 Thread.sleep(random.nextInt(5000));
             }
         } catch (InterruptedException e) {
