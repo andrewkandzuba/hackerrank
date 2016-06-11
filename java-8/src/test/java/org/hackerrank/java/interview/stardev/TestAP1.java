@@ -40,5 +40,7 @@ public class TestAP1 {
         Assert.assertTrue(scoresAverage(new int[]{2, 2, 4, 4}) == 4);
         Assert.assertTrue(scoresAverage(new int[]{4, 4, 4, 2, 2, 2}) == 4);
         Assert.assertTrue(scoresAverage(new int[]{3, 4, 5, 1, 2, 3}) == 4);
+        Assert.assertTrue(scoresAverage(new int[]{5, 6}) == 6);
+        Assert.assertTrue(scoresAverage(new int[]{5, 4}) == 5);
     }
 }

@@ -67,6 +67,10 @@ public class AP1 {
 
 
     private static int average(int[] scores, int start, int end) {
-        return 0;
+        int sum = 0;
+        for(int i = start; i < end; i++){
+            sum += scores[i];
+        }
+        return sum / (end - start);
     }
 }
