@@ -24,7 +24,7 @@ public class ThreadQueuePutter {
         });
 
         final Thread putterMonitor = new Thread(() -> {
-            while (putter.getState() != Thread.State.TERMINATED) {
+            while (putter.isAlive()) {
                 try {
                     System.out.println("Putter thread interrupted status is : " + putter.isInterrupted());
                     System.out.println("Putter thread state is : " + putter.getState());
