@@ -37,7 +37,7 @@ public class ThreadQueuePutter {
 
         putter.start();
         putterMonitor.start();
-        //Thread.sleep(5000);
-        //putter.interrupt();
+        Thread.sleep(5000);
+        putter.interrupt();
     }
 }
