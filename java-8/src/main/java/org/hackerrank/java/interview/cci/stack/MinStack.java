@@ -41,7 +41,7 @@ public class MinStack<T extends Comparable> {
         return top.getMin().getData();
     }
 
-    private final class Node<T> {
+    static final class Node<T> {
         private final T data;
         private final Node<T> next;
         private Node<T> min;
