@@ -27,22 +27,20 @@ public class TowersOfHanoi {
     }
 
     public void solve() {
-        move(towers.get(0).size(), 0, 2);
+        move(towers.get(0).size(), 0, 1, 2);
     }
+
 
     /**
      * https://en.wikipedia.org/wiki/Tower_of_Hanoi
-     * @param n
-     * @param from
-     * @param to
      */
-    private void move(int n, int from, int to) {
-        if (n == 1) {
-            towers.get(to).push(towers.get(from).pop());
+    private void move(int disk, int source, int spare, int dest) {
+        if (disk == 1) {
+            towers.get(dest).push(towers.get(source).pop()); // move disk from source to dest
         } else {
-            move(n - 1, 0, 1);
-            move(1, 0, 2);
-            move(n - 1, 2, 0);
+            move(disk - 1, source, dest, spare);   // Step 1 above
+            towers.get(dest).push(towers.get(source).pop());  // Step 2 above
+            move(disk - 1, spare, source, dest);   // Step 3 above
         }
     }
 }
