@@ -1,5 +1,7 @@
 package org.hackerrank.java.interview.jcp.futures;
 
+import org.hackerrank.java.interview.jcp.utils.ExceptionsManager;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
@@ -23,7 +25,7 @@ public class Preloader {
             if (cause instanceof DataLoadException){
                 throw (DataLoadException) cause;
             } else {
-                throw launderThrowable(cause);
+                throw ExceptionsManager.launderThrowable(cause);
             }
         }
     }
@@ -34,16 +36,6 @@ public class Preloader {
 
     public void start() {
         thread.start();
-    }
-
-    public static RuntimeException launderThrowable(Throwable t) {
-        if (t instanceof RuntimeException) {
-            return (RuntimeException) t;
-        } else if (t instanceof Error) {
-            throw (Error) t;
-        } else {
-            throw new IllegalStateException("Not unchecked", t);
-        }
     }
 
     public static void main(String... args) throws InterruptedException, DataLoadException {
