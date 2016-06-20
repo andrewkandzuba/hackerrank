@@ -25,7 +25,7 @@ public class Memoizer<A, V> implements Computable<A, V> {
                 f = cache.putIfAbsent(arg, ft);
                 if (f == null) {
                     f = ft;
-                    es.submit(ft);
+                    ft.run();
                 }
             }
             try {
