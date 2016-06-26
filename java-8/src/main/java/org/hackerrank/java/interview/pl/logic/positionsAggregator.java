@@ -12,7 +12,7 @@ public final class PositionsAggregator {
         return coefficient / NAV > 0.01;
     }
 
-    public static boolean containBond15to25(Stream<Position> stream){
+    public static boolean containBond15to25(Stream<Position> stream) {
         double coefficient = stream
                 .filter(p -> p.getAssetType().equals(Position.AssetType.CORPORATE_BOND)
                         || p.getAssetType().equals(Position.AssetType.GOVERNMENT_BOND))

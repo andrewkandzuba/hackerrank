@@ -2,39 +2,38 @@ package org.hackerrank.java.interview.jcp.pool;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Pool<P extends Poolable> implements Closeable {
-    private final BlockingQueue<P> unused;
-    private final Set<P> all;
+    private final BlockingDeque<P> unused;
     private final PoolableFactory<P> factory;
 
-    private final ReentrantLock lock;
-    private volatile boolean isClosed;
+    private final ReentrantReadWriteLock lock;
+    private volatile boolean closed;
 
     public Pool(PoolableFactory<P> factory) {
-        this.unused = new LinkedBlockingQueue<>();
-        this.all = new HashSet<>();
+        this.unused = new LinkedBlockingDeque<>();
         this.factory = factory;
 
-        this.lock = new ReentrantLock();
-        this.isClosed = false;
+        this.closed = false;
+        this.lock = new ReentrantReadWriteLock();
     }
 
     public P issue() {
-        if (isClosed) {
-            throw new IllegalStateException("Pool is closed");
-        }
-        P p;
-        if (!unused.isEmpty()) {
+        lock.readLock().lock();
+        try {
+            if (closed) {
+                throw new IllegalStateException("Pool is closed");
+            }
+            P p;
             while (!unused.isEmpty()) {
                 try {
-                    if ((p = unused.poll(100, TimeUnit.MILLISECONDS)) == null) {
+                    if ((p = unused.pollFirst(100, TimeUnit.MILLISECONDS)) == null) {
                         break;
                     }
                     if (p.isValid()) {
@@ -47,49 +46,52 @@ public class Pool<P extends Poolable> implements Closeable {
                         }
                     }
                 } catch (InterruptedException e) {
-                    throw new IllegalStateException("Unable to return poolable instance", e);
+                    throw new IllegalStateException("Unable to return Poolable instance", e);
                 }
             }
-        }
-        lock.lock();
-        try {
-            if (isClosed) {
-                throw new IllegalStateException("Pool is closed");
-            }
-            p = factory.create();
-            all.add(p);
-            return p;
+            return factory.create();
         } finally {
-            lock.unlock();
+            lock.readLock().unlock();
         }
     }
 
     public void release(P p) {
-        if (!unused.offer(p)) {
-            try {
-                p.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+        lock.readLock().unlock();
+        try {
+            if (closed) {
+                throw new IllegalStateException("Pool is closed");
             }
+            if (p.isValid() && !unused.offerFirst(p)) {
+                try {
+                    p.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } finally {
+            lock.readLock().unlock();
         }
     }
 
     @Override
     public void close() throws IOException {
-        lock.lock();
+        List<P> ps = new ArrayList<>();
+        lock.writeLock().lock();
         try {
-            if (!isClosed) {
-                for (P p : all) {
-                    try {
-                        p.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                isClosed = true;
+            if (closed) {
+                throw new IllegalStateException("Pool is closed");
             }
+            closed = true;
+            unused.drainTo(ps);
         } finally {
-            lock.unlock();
+            lock.writeLock().unlock();
+        }
+        for (P p : ps) {
+            try {
+                p.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
