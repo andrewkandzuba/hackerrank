@@ -1,7 +1,7 @@
 package org.hackerrank.java.interview.jcp.pool;
 
 import org.hackerrank.java.interview.jcp.pool.connection.Connection;
-import org.hackerrank.java.interview.jcp.pool.connection.ThreadPoolFactory;
+import org.hackerrank.java.interview.jcp.pool.connection.ConnectionThreadFactory;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,22 +13,22 @@ public class TestPool {
 
     @Test
     public void testConnectionPool() throws Exception {
-        Pool<Connection> pool = new Pool<>(Connection::new);
         CountDownLatch latch = new CountDownLatch(100);
-        ExecutorService es = Executors.newFixedThreadPool(10, new ThreadPoolFactory());
-
+        ExecutorService es = Executors.newFixedThreadPool(5, ConnectionThreadFactory.createThreadFactory());
         new Thread(() -> {
-            while (true) {
+            while (!es.isShutdown()) {
                 try {
                     es.submit(() -> {
-
+                        Connection c = ConnectionThreadFactory.getConnection();
+                        logger.info(String.format("Do something useful with connection: %s", c.getId()));
                     });
                 } catch (RejectedExecutionException e) {
                     if (!es.isShutdown()) {
                         logger.error("Task submission rejected", e);
-                        break;
                     }
+                    break;
                 }
+                latch.countDown();
             }
         }).start();
         logger.info("Before latch");

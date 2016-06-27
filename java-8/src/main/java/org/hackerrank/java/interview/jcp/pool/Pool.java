@@ -4,12 +4,11 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Pool<P extends Poolable> implements Closeable {
+    private final ExecutorService executorService;
     private final BlockingDeque<P> unused;
     private final PoolableFactory<P> factory;
 
@@ -17,6 +16,8 @@ public class Pool<P extends Poolable> implements Closeable {
     private volatile boolean closed;
 
     public Pool(PoolableFactory<P> factory) {
+        this.executorService = Executors.newSingleThreadExecutor();
+
         this.unused = new LinkedBlockingDeque<>();
         this.factory = factory;
 
@@ -39,11 +40,14 @@ public class Pool<P extends Poolable> implements Closeable {
                     if (p.isValid()) {
                         return p;
                     } else {
-                        try {
-                            p.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        final P pp = p;
+                        executorService.submit(() -> {
+                            try {
+                                pp.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
                     }
                 } catch (InterruptedException e) {
                     throw new IllegalStateException("Unable to return Poolable instance", e);
@@ -56,17 +60,19 @@ public class Pool<P extends Poolable> implements Closeable {
     }
 
     public void release(P p) {
-        lock.readLock().unlock();
+        lock.readLock().lock();
         try {
             if (closed) {
                 throw new IllegalStateException("Pool is closed");
             }
             if (p.isValid() && !unused.offerFirst(p)) {
-                try {
-                    p.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                executorService.submit(() -> {
+                    try {
+                        p.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
             }
         } finally {
             lock.readLock().unlock();
@@ -87,11 +93,13 @@ public class Pool<P extends Poolable> implements Closeable {
             lock.writeLock().unlock();
         }
         for (P p : ps) {
-            try {
-                p.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            executorService.submit(() -> {
+                try {
+                    p.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
         }
     }
 }
