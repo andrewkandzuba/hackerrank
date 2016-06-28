@@ -12,13 +12,19 @@ public class Pool<P extends Poolable> implements Closeable {
     private static final Logger logger = LoggerFactory.getLogger(Pool.class);
 
     private final PoolableFactory<P> factory;
-    private final ExecutorService executorService;
+    private final ScheduledExecutorService executorService;
     private final BlockingDeque<P> unused;
     private final Set<P> all;
 
-    public Pool(PoolableFactory<P> factory) {
+    public static <E extends Poolable> Pool<E> create(PoolableFactory<E> factory){
+        Pool<E> pool = new Pool<>(factory);
+        pool.gc();
+        return pool;
+    }
+
+    private Pool(PoolableFactory<P> factory) {
         this.factory = factory;
-        this.executorService = Executors.newSingleThreadExecutor();
+        this.executorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
         this.unused = new LinkedBlockingDeque<>();
         this.all = new CopyOnWriteArraySet<>();
     }
@@ -64,14 +70,24 @@ public class Pool<P extends Poolable> implements Closeable {
         } finally {
             executorService.shutdownNow();
         }
-        all.stream().filter(Poolable::isValid).forEach(p -> {
-            logger.info("Clean up instance: " + p);
-            try {
-                p.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        all.stream().filter(Poolable::isValid).forEach(this::cleanUp);
         all.clear();
+    }
+
+    private void gc(){
+        executorService.schedule(() -> all.stream().filter(p -> !p.isValid()).forEach(p -> {
+            if (all.remove(p)) {
+                cleanUp(p);
+            }
+        }), 10000, TimeUnit.MILLISECONDS);
+    }
+
+    private void cleanUp(P p) {
+        logger.info("Clean up instance: " + p);
+        try {
+            p.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

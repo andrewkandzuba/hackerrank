@@ -14,7 +14,7 @@ public class TestPool {
 
     @Test
     public void testConnectionPool() throws Exception {
-        try (Pool<Connection> pool = new Pool<>(ConnectionReal::new)) {
+        try (Pool<Connection> pool = Pool.create(ConnectionReal::new)) {
             CountDownLatch latch = new CountDownLatch(100);
             ExecutorService es = Executors.newFixedThreadPool(5, ConnectionThreadFactory.createThreadFactory(pool));
             new Thread(() -> {
