@@ -26,7 +26,7 @@ public class Pool<P extends Poolable> implements Closeable {
         this.factory = factory;
         this.executorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
         this.unused = new LinkedBlockingDeque<>();
-        this.all = new CopyOnWriteArraySet<>();
+        this.all = new ConcurrentSkipListSet<P>();
     }
 
     public P issue() throws InterruptedException {

@@ -71,6 +71,12 @@ public class ConnectionThreadFactory implements ThreadFactory {
         public int getId() {
             return connection.getId();
         }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public int compareTo(Object o) {
+            return connection.compareTo(o);
+        }
     }
 
 }

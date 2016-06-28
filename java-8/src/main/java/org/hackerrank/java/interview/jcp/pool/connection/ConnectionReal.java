@@ -17,7 +17,7 @@ public class ConnectionReal implements Connection {
 
     public ConnectionReal() {
         this.created = System.currentTimeMillis();
-        this.id = counter.incrementAndGet();
+        this.id = counter.getAndIncrement();
         this.isClosed = false;
         logger.info(String.format("Open new connection - %s", id));
     }
@@ -35,5 +35,17 @@ public class ConnectionReal implements Connection {
     public void close() throws IOException {
         isClosed = true;
         logger.info(String.format("Close existing connection - %s", id));
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        ConnectionReal cr = (ConnectionReal) o;
+        if(this.created > cr.created){
+            return -1;
+        } else if(this.created < cr.created){
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }
