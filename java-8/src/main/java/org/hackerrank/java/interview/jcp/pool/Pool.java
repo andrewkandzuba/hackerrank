@@ -11,15 +11,16 @@ import java.util.concurrent.*;
 public class Pool<P extends Poolable> implements Closeable {
     private static final Logger logger = LoggerFactory.getLogger(Pool.class);
 
+    private final PoolableFactory<P> factory;
     private final ExecutorService executorService;
     private final BlockingDeque<P> unused;
-    private final PoolableFactory<P> factory;
-    private final Set<P> all = new CopyOnWriteArraySet<>();
+    private final Set<P> all;
 
     public Pool(PoolableFactory<P> factory) {
+        this.factory = factory;
         this.executorService = Executors.newSingleThreadExecutor();
         this.unused = new LinkedBlockingDeque<>();
-        this.factory = factory;
+        this.all = new CopyOnWriteArraySet<>();
     }
 
     public P issue() {
