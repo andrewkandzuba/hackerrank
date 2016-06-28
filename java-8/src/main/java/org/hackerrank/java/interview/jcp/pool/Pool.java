@@ -1,6 +1,5 @@
 package org.hackerrank.java.interview.jcp.pool;
 
-import org.hackerrank.java.interview.jcp.utils.ExceptionsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,20 +35,16 @@ public class Pool<P extends Poolable> implements Closeable {
             try {
                 p = unused.pollFirst(100, TimeUnit.MILLISECONDS);
                 if (p == null) {
-                    FutureTask<P> fp = new FutureTask<>(() -> {
+                    executorService.submit(() -> {
                         P pp = factory.create();
                         all.add(pp);
-                        return pp;
+                        unused.offer(pp);
                     });
-                    executorService.submit(fp);
-                    unused.offer(fp.get());
                 } else if (p.isValid()) {
                     break;
                 }
             } catch (CancellationException e) {
                 cleanUp(p);
-            } catch (ExecutionException e) {
-                throw ExceptionsManager.launderThrowable(e);
             }
         }
         return p;
