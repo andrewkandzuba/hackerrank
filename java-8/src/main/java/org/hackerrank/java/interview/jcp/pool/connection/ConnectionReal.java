@@ -19,12 +19,12 @@ public class ConnectionReal implements Connection {
         this.created = System.currentTimeMillis();
         this.id = counter.incrementAndGet();
         this.isClosed = false;
-        logger.info(String.format("Open new connection. Total opened = %s", id));
+        logger.info(String.format("Open new connection - %s", id));
     }
 
     @Override
     public boolean isValid() {
-        return (System.currentTimeMillis() - created > 300 * 1000 && !isClosed);
+        return (System.currentTimeMillis() - created < 300 * 1000 && !isClosed);
     }
 
     public int getId() {
@@ -34,6 +34,6 @@ public class ConnectionReal implements Connection {
     @Override
     public void close() throws IOException {
         isClosed = true;
-        logger.info(String.format("Close existing connection. Total opened = %s", id));
+        logger.info(String.format("Close existing connection - %s", id));
     }
 }

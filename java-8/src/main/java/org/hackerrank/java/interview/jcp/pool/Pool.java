@@ -1,105 +1,76 @@
 package org.hackerrank.java.interview.jcp.pool;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 import java.util.concurrent.*;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Pool<P extends Poolable> implements Closeable {
+    private static final Logger logger = LoggerFactory.getLogger(Pool.class);
+
     private final ExecutorService executorService;
     private final BlockingDeque<P> unused;
     private final PoolableFactory<P> factory;
-
-    private final ReentrantReadWriteLock lock;
-    private volatile boolean closed;
+    private final Set<P> all = new CopyOnWriteArraySet<>();
 
     public Pool(PoolableFactory<P> factory) {
         this.executorService = Executors.newSingleThreadExecutor();
-
         this.unused = new LinkedBlockingDeque<>();
         this.factory = factory;
-
-        this.closed = false;
-        this.lock = new ReentrantReadWriteLock();
     }
 
     public P issue() {
-        lock.readLock().lock();
         try {
-            if (closed) {
-                throw new IllegalStateException("Pool is closed");
-            }
-            P p;
             while (!unused.isEmpty()) {
-                try {
-                    if ((p = unused.pollFirst(100, TimeUnit.MILLISECONDS)) == null) {
-                        break;
-                    }
-                    if (p.isValid()) {
-                        return p;
-                    } else {
-                        final P pp = p;
-                        executorService.submit(() -> {
-                            try {
-                                pp.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        });
-                    }
-                } catch (InterruptedException e) {
-                    throw new IllegalStateException("Unable to return Poolable instance", e);
+                P p = unused.pollFirst(100, TimeUnit.MILLISECONDS);
+                if (p == null) {
+                    break;
+                }
+                if (p.isValid()) {
+                    return p;
                 }
             }
-            return factory.create();
-        } finally {
-            lock.readLock().unlock();
+            FutureTask<P> fp = new FutureTask<>(() -> {
+                P p = factory.create();
+                all.add(p);
+                return p;
+            });
+            executorService.submit(fp);
+            return fp.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new IllegalStateException("Unable to return instance", e);
         }
     }
 
     public void release(P p) {
-        lock.readLock().lock();
-        try {
-            if (closed) {
-                throw new IllegalStateException("Pool is closed");
+        executorService.submit(() -> {
+            if (unused.offerFirst(p)) {
+                logger.info("Instance has been returned to the pool" + p);
             }
-            if (p.isValid() && !unused.offerFirst(p)) {
-                executorService.submit(() -> {
-                    try {
-                        p.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-            }
-        } finally {
-            lock.readLock().unlock();
-        }
+        });
     }
 
     @Override
     public void close() throws IOException {
-        List<P> ps = new ArrayList<>();
-        lock.writeLock().lock();
         try {
-            if (closed) {
-                throw new IllegalStateException("Pool is closed");
-            }
-            closed = true;
-            unused.drainTo(ps);
+            executorService.shutdown();
+            executorService.awaitTermination(100, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
-            lock.writeLock().unlock();
+            executorService.shutdownNow();
         }
-        for (P p : ps) {
-            executorService.submit(() -> {
-                try {
-                    p.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
+        all.stream().filter(Poolable::isValid).forEach(p -> {
+            logger.info("Clean up instance: " + p);
+            try {
+                p.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        all.clear();
     }
 }
