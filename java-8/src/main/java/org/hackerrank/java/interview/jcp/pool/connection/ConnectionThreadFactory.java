@@ -8,14 +8,14 @@ import java.io.IOException;
 import java.util.concurrent.ThreadFactory;
 
 public class ConnectionThreadFactory implements ThreadFactory {
-    private static final Logger logger  = LoggerFactory.getLogger(ConnectionThreadFactory.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConnectionThreadFactory.class);
     private final static ThreadLocal<Connection> CONNECTION_THREAD_LOCAL = new ThreadLocal<>();
 
-    public static ThreadFactory createThreadFactory(Pool<Connection> pool){
+    public static ThreadFactory createThreadFactory(Pool<Connection> pool) {
         return new ConnectionThreadFactory(pool);
     }
 
-    public static Connection getConnection(){
+    public static Connection getConnection() {
         return CONNECTION_THREAD_LOCAL.get();
     }
 
@@ -27,10 +27,10 @@ public class ConnectionThreadFactory implements ThreadFactory {
 
     @Override
     public Thread newThread(Runnable r) {
-        return new Thread(){
+        return new Thread() {
             @Override
             public void run() {
-                try(Connection c = new ConnectionDecorator(pool)) {
+                try (Connection c = new ConnectionDecorator(pool)) {
                     logger.info(String.format("Start new executor's thread with connection: %s", c.getId()));
                     CONNECTION_THREAD_LOCAL.set(c);
                     r.run();
@@ -50,7 +50,11 @@ public class ConnectionThreadFactory implements ThreadFactory {
 
         private ConnectionDecorator(Pool<Connection> pool) {
             this.pool = pool;
-            this.connection = pool.issue();
+            try {
+                this.connection = pool.issue();
+            } catch (InterruptedException e) {
+                throw new IllegalStateException("Unable to instantiate connection", e);
+            }
         }
 
         @Override

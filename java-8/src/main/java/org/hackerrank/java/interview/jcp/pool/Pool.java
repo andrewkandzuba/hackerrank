@@ -1,5 +1,6 @@
 package org.hackerrank.java.interview.jcp.pool;
 
+import org.hackerrank.java.interview.jcp.utils.ExceptionsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,7 @@ public class Pool<P extends Poolable> implements Closeable {
     private final BlockingDeque<P> unused;
     private final Set<P> all;
 
-    public static <E extends Poolable> Pool<E> create(PoolableFactory<E> factory){
+    public static <E extends Poolable> Pool<E> create(PoolableFactory<E> factory) {
         Pool<E> pool = new Pool<>(factory);
         pool.gc();
         return pool;
@@ -29,27 +30,29 @@ public class Pool<P extends Poolable> implements Closeable {
         this.all = new CopyOnWriteArraySet<>();
     }
 
-    public P issue() {
-        try {
-            while (!unused.isEmpty()) {
-                P p = unused.pollFirst(100, TimeUnit.MILLISECONDS);
+    public P issue() throws InterruptedException {
+        P p = null;
+        while (true) {
+            try {
+                p = unused.pollFirst(100, TimeUnit.MILLISECONDS);
                 if (p == null) {
+                    FutureTask<P> fp = new FutureTask<>(() -> {
+                        P pp = factory.create();
+                        all.add(pp);
+                        return pp;
+                    });
+                    executorService.submit(fp);
+                    unused.offer(fp.get());
+                } else if (p.isValid()) {
                     break;
                 }
-                if (p.isValid()) {
-                    return p;
-                }
+            } catch (CancellationException e) {
+                cleanUp(p);
+            } catch (ExecutionException e) {
+                throw ExceptionsManager.launderThrowable(e);
             }
-            FutureTask<P> fp = new FutureTask<>(() -> {
-                P p = factory.create();
-                all.add(p);
-                return p;
-            });
-            executorService.submit(fp);
-            return fp.get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new IllegalStateException("Unable to return instance", e);
         }
+        return p;
     }
 
     public void release(P p) {
@@ -70,24 +73,22 @@ public class Pool<P extends Poolable> implements Closeable {
         } finally {
             executorService.shutdownNow();
         }
-        all.stream().filter(Poolable::isValid).forEach(this::cleanUp);
-        all.clear();
+        all.stream().forEach(this::cleanUp);
     }
 
-    private void gc(){
-        executorService.schedule(() -> all.stream().filter(p -> !p.isValid()).forEach(p -> {
-            if (all.remove(p)) {
-                cleanUp(p);
-            }
-        }), 10000, TimeUnit.MILLISECONDS);
+    private void gc() {
+        executorService.schedule(() -> all.stream().filter(p -> !p.isValid()).forEach(this::cleanUp), 10000, TimeUnit.MILLISECONDS);
     }
 
     private void cleanUp(P p) {
-        logger.info("Clean up instance: " + p);
-        try {
-            p.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (p != null) {
+            logger.info("Clean up instance: " + p);
+            try {
+                p.close();
+                all.remove(p);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
