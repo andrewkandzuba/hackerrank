@@ -30,8 +30,8 @@ public class Pool<P extends Poolable> implements Closeable {
     }
 
     public P issue() throws InterruptedException {
-        while (true) {
-            P p = unused.pollFirst(100, TimeUnit.MILLISECONDS);
+        while (!executorService.isShutdown()) {
+            P p = unused.pollFirst();
             if (p != null) {
                 if (!p.isValid()) {
                     cleanUp(p);
@@ -40,6 +40,7 @@ public class Pool<P extends Poolable> implements Closeable {
                 return p;
             }
         }
+        throw new IllegalStateException("Pool is shutdown");
     }
 
     public void release(P p) {
