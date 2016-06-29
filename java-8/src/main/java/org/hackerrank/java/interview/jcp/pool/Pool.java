@@ -29,9 +29,24 @@ public class Pool<P extends Poolable> implements Closeable {
         this.permit = new Semaphore(capacity);
     }
 
-    public P issue() throws InterruptedException {
+    public P issue() throws InterruptedException, PoolableRetrieveException {
+        P p = null;
         while (!executorService.isShutdown()) {
-            P p = unused.pollFirst();
+            p = unused.pollFirst();
+            if(p != null){
+                if (!p.isValid()) {
+                    cleanUp(p);
+                    continue;
+                }
+                break;
+            }
+        }
+        return p;
+    }
+
+    public P issue(long timeout, TimeUnit unit) throws InterruptedException, PoolableRetrieveException {
+        while (!unused.isEmpty()) {
+            P p = unused.pollFirst(timeout, unit);
             if (p != null) {
                 if (!p.isValid()) {
                     cleanUp(p);
@@ -40,7 +55,7 @@ public class Pool<P extends Poolable> implements Closeable {
                 return p;
             }
         }
-        throw new IllegalStateException("Pool is shutdown");
+        throw new PoolableRetrieveException("Zero connections are currently available!");
     }
 
     public void release(P p) {

@@ -1,6 +1,7 @@
 package org.hackerrank.java.interview.jcp.pool.connection;
 
 import org.hackerrank.java.interview.jcp.pool.Pool;
+import org.hackerrank.java.interview.jcp.pool.PoolableRetrieveException;
 
 import java.io.IOException;
 
@@ -8,13 +9,9 @@ public class ConnectionDecorator implements Connection {
     private final Pool<Connection> pool;
     private final Connection connection;
 
-    public ConnectionDecorator(Pool<Connection> pool) {
+    public ConnectionDecorator(Pool<Connection> pool) throws PoolableRetrieveException, InterruptedException {
         this.pool = pool;
-        try {
-            this.connection = pool.issue();
-        } catch (InterruptedException e) {
-            throw new IllegalStateException("Unable to instantiate connection", e);
-        }
+        this.connection = pool.issue();
     }
 
     @Override

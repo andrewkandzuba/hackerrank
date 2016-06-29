@@ -27,7 +27,7 @@ public class TestPool {
                     es.submit(() -> {
                         try (Connection c = new ConnectionDecorator(pool)) {
                             logger.info(String.format("Do something useful with connection: %s", c.getId()));
-                        } catch (IOException e) {
+                        } catch (IOException | InterruptedException | PoolableRetrieveException e) {
                             e.printStackTrace();
                         }
                     });
