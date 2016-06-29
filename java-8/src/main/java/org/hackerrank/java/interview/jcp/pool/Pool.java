@@ -1,59 +1,51 @@
 package org.hackerrank.java.interview.jcp.pool;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Set;
 import java.util.concurrent.*;
 
 public class Pool<P extends Poolable> implements Closeable {
-    private static final Logger logger = LoggerFactory.getLogger(Pool.class);
-
     private final PoolableFactory<P> factory;
     private final ScheduledExecutorService executorService;
     private final BlockingDeque<P> unused;
-    private final Set<P> all;
+    private final Semaphore permit;
 
-    public static <E extends Poolable> Pool<E> create(PoolableFactory<E> factory) {
-        Pool<E> pool = new Pool<>(factory);
-        pool.gc();
+    static <E extends Poolable> Pool<E> create(PoolableFactory<E> factory) {
+        Pool<E> pool = new Pool<>(factory, Runtime.getRuntime().availableProcessors());
+        pool.producer();
         return pool;
     }
 
-    private Pool(PoolableFactory<P> factory) {
+    static <E extends Poolable> Pool<E> create(PoolableFactory<E> factory, int capacity) {
+        Pool<E> pool = new Pool<>(factory, capacity);
+        pool.producer();
+        return pool;
+    }
+
+    private Pool(PoolableFactory<P> factory, int capacity) {
         this.factory = factory;
         this.executorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
         this.unused = new LinkedBlockingDeque<>();
-        this.all = new ConcurrentSkipListSet<P>();
+        this.permit = new Semaphore(capacity);
     }
 
     public P issue() throws InterruptedException {
-        P p = null;
         while (true) {
-            try {
-                p = unused.pollFirst(100, TimeUnit.MILLISECONDS);
-                if (p == null) {
-                    executorService.submit(() -> {
-                        P pp = factory.create();
-                        all.add(pp);
-                        unused.offer(pp);
-                    });
-                } else if (p.isValid()) {
-                    break;
+            P p = unused.pollFirst(100, TimeUnit.MILLISECONDS);
+            if (p != null) {
+                if (!p.isValid()) {
+                    cleanUp(p);
+                    continue;
                 }
-            } catch (CancellationException e) {
-                cleanUp(p);
+                return p;
             }
         }
-        return p;
     }
 
     public void release(P p) {
         executorService.submit(() -> {
-            if (unused.offerFirst(p)) {
-                logger.info("Instance has been returned to the pool" + p);
+            if (!unused.offerFirst(p)) {
+                cleanUp(p);
             }
         });
     }
@@ -68,22 +60,35 @@ public class Pool<P extends Poolable> implements Closeable {
         } finally {
             executorService.shutdownNow();
         }
-        all.stream().forEach(this::cleanUp);
-    }
-
-    private void gc() {
-        executorService.schedule(() -> all.stream().filter(p -> !p.isValid()).forEach(this::cleanUp), 10000, TimeUnit.MILLISECONDS);
+        unused.stream().forEach(this::cleanUp);
     }
 
     private void cleanUp(P p) {
-        if (p != null) {
-            logger.info("Clean up instance: " + p);
-            try {
-                p.close();
-                all.remove(p);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            p.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            permit.release();
         }
+    }
+
+    private void producer() {
+        executorService.submit(() -> {
+            while (!executorService.isShutdown()) {
+                if (permit.tryAcquire()) {
+                    boolean wasAdded = false;
+                    P p = null;
+                    try {
+                        p = factory.create();
+                        wasAdded = unused.offerFirst(p);
+                    } finally {
+                        if (!wasAdded) {
+                            cleanUp(p);
+                        }
+                    }
+                }
+            }
+        });
     }
 }
