@@ -1,10 +1,11 @@
 package org.hackerrank.java.interview.jcp.cache;
 
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class FibonacciComputable implements Computable<Integer, Integer> {
-    private final static Logger logger = Logger.getLogger("FibonacciComputable");
+class FibonacciComputable implements Computable<Integer, Integer> {
+    private static final Logger logger = LoggerFactory.getLogger(TestMemoizer.class);
 
     @Override
     public Integer compute(Integer arg) throws InterruptedException {

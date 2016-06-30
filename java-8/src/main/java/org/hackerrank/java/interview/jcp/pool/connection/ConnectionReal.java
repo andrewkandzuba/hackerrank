@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ConnectionReal implements Connection {
-    private static final Logger logger  = LoggerFactory.getLogger(ConnectionReal.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConnectionReal.class);
     private static final AtomicInteger counter = new AtomicInteger();
 
     private final long created;
@@ -23,8 +23,8 @@ public class ConnectionReal implements Connection {
     }
 
     @Override
-    public boolean isValid() {
-        return (System.currentTimeMillis() - created < 300 * 1000 && !isClosed);
+    public boolean isExpired() {
+        return (System.currentTimeMillis() - created > 300 * 100 || isClosed);
     }
 
     public int getId() {
@@ -40,9 +40,9 @@ public class ConnectionReal implements Connection {
     @Override
     public int compareTo(Object o) {
         ConnectionReal cr = (ConnectionReal) o;
-        if(this.created > cr.created){
+        if (this.created > cr.created) {
             return -1;
-        } else if(this.created < cr.created){
+        } else if (this.created < cr.created) {
             return 1;
         } else {
             return 0;

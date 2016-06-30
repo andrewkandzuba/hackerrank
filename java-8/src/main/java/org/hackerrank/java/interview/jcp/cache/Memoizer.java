@@ -6,9 +6,9 @@ import java.util.concurrent.*;
 import static org.hackerrank.java.interview.jcp.utils.ExceptionsManager.launderThrowable;
 
 public class Memoizer<A, V> implements Computable<A, V> {
-    private final ConcurrentMap<A, Future<V>> cache = new ConcurrentHashMap<>();
-    private final Computable<A, V> c;
-    private final ExecutorService es;
+    protected final ConcurrentMap<A, Future<V>> cache = new ConcurrentHashMap<>();
+    protected final Computable<A, V> c;
+    protected final ExecutorService es;
 
     public Memoizer(Computable<A, V> c, ExecutorService es) {
         this.c = c;
@@ -25,7 +25,7 @@ public class Memoizer<A, V> implements Computable<A, V> {
                 f = cache.putIfAbsent(arg, ft);
                 if (f == null) {
                     f = ft;
-                    ft.run();
+                    es.submit(ft);
                 }
             }
             try {

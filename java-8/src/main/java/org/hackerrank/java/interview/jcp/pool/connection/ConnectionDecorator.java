@@ -1,7 +1,6 @@
 package org.hackerrank.java.interview.jcp.pool.connection;
 
 import org.hackerrank.java.interview.jcp.pool.Pool;
-import org.hackerrank.java.interview.jcp.pool.PoolableRetrieveException;
 
 import java.io.IOException;
 
@@ -9,19 +8,23 @@ public class ConnectionDecorator implements Connection {
     private final Pool<Connection> pool;
     private final Connection connection;
 
-    public ConnectionDecorator(Pool<Connection> pool) throws PoolableRetrieveException, InterruptedException {
+    public ConnectionDecorator(Pool<Connection> pool) throws InterruptedException {
         this.pool = pool;
-        this.connection = pool.issue();
+        this.connection = pool.take();
     }
 
     @Override
     public void close() throws IOException {
-        pool.release(connection);
+        try {
+            pool.release(connection);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     @Override
-    public boolean isValid() {
-        return connection.isValid();
+    public boolean isExpired() {
+        return connection.isExpired();
     }
 
     @Override

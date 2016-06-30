@@ -12,22 +12,23 @@ import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-public class TestPool {
-    private static final Logger logger = LoggerFactory.getLogger(TestPool.class);
+public class TestConnectionPool {
+    private static final Logger logger = LoggerFactory.getLogger(TestConnectionPool.class);
+    private static final int MAX_WORKERS = 100;
 
     @Test
     public void testConnectionPool() throws Exception {
-        final int MAX_WORKERS = 100;
-        try (Pool<Connection> pool = Pool.create(ConnectionReal::new)) {
+        try (Pool<Connection> pool = new Pool<>(ConnectionReal::new)) {
             CountDownLatch latch = new CountDownLatch(MAX_WORKERS);
-            ExecutorService es = Executors.newFixedThreadPool(MAX_WORKERS, new ConnectionThreadFactory());
+            ExecutorService es = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2, new ConnectionThreadFactory());
             new Thread(() -> {
                 while (!es.isShutdown()) {
                     es.submit(() -> {
                         try (Connection c = new ConnectionDecorator(pool)) {
                             logger.info(String.format("Do something useful with connection: %s", c.getId()));
-                        } catch (IOException | InterruptedException | PoolableRetrieveException e) {
+                        } catch (IOException | InterruptedException | NullPointerException e) {
                             e.printStackTrace();
                         }
                     });
@@ -41,6 +42,24 @@ public class TestPool {
             while (!es.isTerminated()) {
                 Thread.yield();
             }
+        }
+    }
+
+    @Test
+    public void testCompareAndSet() throws Exception {
+        final AtomicBoolean atomicBoolean = new AtomicBoolean(false);
+
+        ExecutorService es = Executors.newFixedThreadPool(MAX_WORKERS, new ConnectionThreadFactory());
+        for (int i = 0; i < 100; i++) {
+            es.submit(() -> {
+                if (atomicBoolean.compareAndSet(false, true)) {
+                    logger.info("I changed it!!!");
+                }
+            });
+        }
+        es.shutdown();
+        while (!es.isTerminated()) {
+            Thread.yield();
         }
     }
 }
