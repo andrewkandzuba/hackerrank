@@ -1,6 +1,6 @@
 package org.hackerrank.java.interview.jcp.pool.connection;
 
-import org.hackerrank.java.interview.jcp.pool.Pool;
+import org.hackerrank.java.interview.jcp.cache.Pool;
 
 import java.io.IOException;
 

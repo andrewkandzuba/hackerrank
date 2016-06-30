@@ -1,9 +1,9 @@
 package org.hackerrank.java.interview.jcp.pool;
 
+import org.hackerrank.java.interview.jcp.cache.Pool;
 import org.hackerrank.java.interview.jcp.pool.connection.Connection;
 import org.hackerrank.java.interview.jcp.pool.connection.ConnectionDecorator;
 import org.hackerrank.java.interview.jcp.pool.connection.ConnectionReal;
-import org.hackerrank.java.interview.jcp.pool.connection.ConnectionThreadFactory;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ public class TestConnectionPool {
     public void testConnectionPool() throws Exception {
         try (Pool<Connection> pool = new Pool<>(ConnectionReal::new)) {
             CountDownLatch latch = new CountDownLatch(MAX_WORKERS);
-            ExecutorService es = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2, new ConnectionThreadFactory());
+            ExecutorService es = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2, new Pool.DaemonThreadFactory());
             new Thread(() -> {
                 while (!es.isShutdown()) {
                     es.submit(() -> {
@@ -49,7 +49,7 @@ public class TestConnectionPool {
     public void testCompareAndSet() throws Exception {
         final AtomicBoolean atomicBoolean = new AtomicBoolean(false);
 
-        ExecutorService es = Executors.newFixedThreadPool(MAX_WORKERS, new ConnectionThreadFactory());
+        ExecutorService es = Executors.newFixedThreadPool(MAX_WORKERS, new Pool.DaemonThreadFactory());
         for (int i = 0; i < 100; i++) {
             es.submit(() -> {
                 if (atomicBoolean.compareAndSet(false, true)) {

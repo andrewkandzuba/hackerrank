@@ -1,8 +1,4 @@
-package org.hackerrank.java.interview.jcp.pool;
-
-import org.hackerrank.java.interview.jcp.cache.Cacheable;
-import org.hackerrank.java.interview.jcp.cache.Computable;
-import org.hackerrank.java.interview.jcp.cache.Memoizer;
+package org.hackerrank.java.interview.jcp.cache;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -14,18 +10,15 @@ import static org.hackerrank.java.interview.jcp.utils.ExceptionsManager.launderT
 
 public class Pool<P extends Cacheable> implements Closeable {
     private final int capacity;
-    private final ExecutorService executorService;
+    private final ExecutorService executorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors(), new DaemonThreadFactory());
     private final HolderMemoizer memoizer;
 
-    Pool(PooledFactory<P> factory) {
-        this.capacity = 1;
-        this.executorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
-        this.memoizer = new HolderMemoizer(arg -> new Holder<>(factory.create()), this.executorService);
+    public Pool(PooledFactory<P> factory) {
+        this(factory, 1);
     }
 
-    Pool(PooledFactory<P> factory, int capacity) {
+    public Pool(PooledFactory<P> factory, int capacity) {
         this.capacity = capacity;
-        this.executorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
         this.memoizer = new HolderMemoizer(arg -> new Holder<>(factory.create()), this.executorService);
     }
 
@@ -81,6 +74,22 @@ public class Pool<P extends Cacheable> implements Closeable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static class DaemonThreadFactory implements ThreadFactory {
+
+        @Override
+        public Thread newThread(Runnable r) {
+            return new DaemonThread(r);
+        }
+
+        private static class DaemonThread extends Thread {
+            private DaemonThread(Runnable r) {
+                super(r);
+                this.setDaemon(true);
+            }
+        }
+
     }
 
     interface PooledFactory<P extends Cacheable> {
