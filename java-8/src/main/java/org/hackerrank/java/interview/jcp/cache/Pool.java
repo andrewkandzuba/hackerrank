@@ -92,7 +92,7 @@ public class Pool<P extends Cacheable> implements Closeable {
 
     }
 
-    interface PooledFactory<P extends Cacheable> {
+    public interface PooledFactory<P extends Cacheable> {
         P create();
     }
 
