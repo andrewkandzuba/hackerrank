@@ -1,5 +1,6 @@
 package org.hackerrank.java.interview.cci.graph;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -9,12 +10,26 @@ public class Node {
     private volatile boolean visited;
 
     public Node(int id) {
-        this.visited = false;
         this.id = id;
         this.targets = new CopyOnWriteArrayList<>();
+        this.visited = false;
     }
 
-    public void addTarget(Node n){
-        targets.add(n);
+    public int getId() {
+        return id;
     }
+
+    public void add(Collection<Node> targets){
+        targets.addAll(targets);
+    }
+
+    public boolean isVisited() {
+        return visited;
+    }
+
+    public void setVisited(boolean visited) {
+        this.visited = visited;
+    }
+
+
 }
