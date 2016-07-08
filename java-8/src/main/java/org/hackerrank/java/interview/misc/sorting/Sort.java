@@ -1,5 +1,5 @@
 package org.hackerrank.java.interview.misc.sorting;
 
-public interface Sort <T extends Comparable<? super T>> {
+interface Sort <T extends Comparable<T>> {
     T[] sort(T[] array);
 }
