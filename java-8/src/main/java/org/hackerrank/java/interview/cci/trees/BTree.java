@@ -1,11 +1,8 @@
 package org.hackerrank.java.interview.cci.trees;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
-public class BTree {
+class BTree {
     private final int v;
     private BTree left;
     private BTree right;
@@ -14,50 +11,32 @@ public class BTree {
         this.v = v;
     }
 
-    public static BTree root(int v){
+    static BTree root(int v) {
         return new BTree(v);
     }
 
-    public BTree left(int v){
+    BTree left(int v) {
         left = new BTree(v);
         return this;
     }
 
-    public BTree left(BTree t){
+    BTree left(BTree t) {
         left = t;
         return this;
     }
 
-    public BTree right(int v){
+    BTree right(int v) {
         right = new BTree(v);
         return this;
     }
 
-    public BTree right(BTree t){
+    BTree right(BTree t) {
         right = t;
         return this;
     }
 
     boolean bst() {
-        Queue<BTree> queue = new LinkedList<>();
-        queue.add(this);
-        while (!queue.isEmpty()) {
-            BTree tree = queue.poll();
-            if(tree.left != null && tree.right != null && (tree.left.v < tree.v || tree.left.v > tree.right.v || tree.right.v < tree.v)){
-                return false;
-            } else if (tree.left != null && tree.left.v < tree.v) {
-                return false;
-            } if (tree.right != null && tree.right.v < tree.v) {
-                return false;
-            }
-            if(tree.left != null){
-                queue.offer(tree.left);
-            }
-            if(tree.right != null){
-                queue.offer(tree.right);
-            }
-        }
-        return true;
+        return dfsMax(this.left, v) <= v && dfsMin(this.right, v) >= v;
     }
 
     boolean balanced() {
@@ -74,7 +53,7 @@ public class BTree {
         }
     }
 
-    int height(){
+    int height() {
         return this.height(this);
     }
 
@@ -82,7 +61,7 @@ public class BTree {
         if (root == null) {
             return 0;
         }
-        int leftHeight =  1 + height(root.left);
+        int leftHeight = 1 + height(root.left);
         int rightHeight = 1 + height(root.right);
         return Math.max(leftHeight, rightHeight);
     }
@@ -106,5 +85,33 @@ public class BTree {
             }
         }
         return levels;
+    }
+
+    private int dfsMax(BTree root, int currMax){
+        if(root == null){
+            return currMax;
+        }
+        if(root.left != null && root.right != null){
+            return Math.max(currMax, Math.max(dfsMax(root.left, currMax), dfsMax(root.right, currMax)));
+        } else if (root.left != null) {
+            return Math.max(currMax, dfsMax(root.left, currMax));
+        } else if (root.right != null){
+            return Math.max(currMax, dfsMax(root.right, currMax));
+        }
+        return Math.max(currMax, root.v);
+    }
+
+    private int dfsMin(BTree root, int currMin){
+        if(root == null){
+            return currMin;
+        }
+        if(root.left != null && root.right != null){
+            return Math.min(currMin, Math.min(dfsMin(root.left, currMin), dfsMin(root.right, currMin)));
+        } else if (root.left != null) {
+            return Math.min(currMin, dfsMin(root.left, currMin));
+        } else if (root.right != null){
+            return Math.min(currMin, dfsMin(root.right, currMin));
+        }
+        return Math.min(currMin, root.v);
     }
 }
