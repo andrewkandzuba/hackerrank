@@ -1,6 +1,9 @@
 package org.hackerrank.java.interview.cci.trees;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 class BTree {
     private final int v;
@@ -35,6 +38,10 @@ class BTree {
         return this;
     }
 
+    int v() {
+        return v;
+    }
+
     boolean bst() {
         return dfsMax(this.left, v) <= v && dfsMin(this.right, v) >= v;
     }
@@ -55,6 +62,51 @@ class BTree {
 
     int height() {
         return this.height(this);
+    }
+
+    BTree find(int v) {
+        return find(this, v);
+    }
+
+    BTree inorderSuccessorOf() {
+        return inorderSuccessorOf(this, this.v, null);
+    }
+
+    BTree inorderSuccessorOf(int v) {
+        return inorderSuccessorOf(this, v, null);
+    }
+
+    private BTree inorderSuccessorOf(BTree r, int v, BTree successor) {
+        if(r == null){
+            return null;
+        }
+        if (v == r.v) {
+            return (r.right != null) ? leftMostOf(r.right) : successor;
+        }
+        if (v < r.v) {
+            return inorderSuccessorOf(r.left, v, r);
+        }
+        return inorderSuccessorOf(r.right, v, successor);
+    }
+
+    private BTree leftMostOf(BTree t) {
+        while (t.left != null) {
+            t = t.left;
+        }
+        return t;
+    }
+
+    private BTree find(BTree r, int v) {
+        if (r == null) {
+            return null;
+        }
+        if (r.v == v) {
+            return r;
+        }
+        if (v < r.v) {
+            return (r.left == null) ? null : find(r.left, v);
+        }
+        return (r.right == null) ? null : find(r.right, v);
     }
 
     private int height(BTree root) {
