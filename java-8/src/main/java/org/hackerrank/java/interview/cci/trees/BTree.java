@@ -76,6 +76,25 @@ class BTree {
         return inorderSuccessorOf(this, v, null);
     }
 
+    BTree fistCommonAncestorOf(int a, int b) {
+        return fistCommonAncestorOf(this, a, b);
+    }
+
+    private BTree fistCommonAncestorOf(BTree r, int a, int b) {
+        if (r == null) {
+            return null;
+        }
+        if (r.v == a || r.v == b) {
+            return r;
+        }
+        BTree rl = fistCommonAncestorOf(r.left, a, b);
+        BTree rr = fistCommonAncestorOf(r.right, a, b);
+        if (rl != null && rr != null) {
+            return r;
+        }
+        return rl != null ? rl : rr ;
+    }
+
     private BTree inorderSuccessorOf(BTree r, int v, BTree successor) {
         if(r == null){
             return null;

@@ -98,4 +98,14 @@ public class TestBTrees {
         t.right(root(20).left(17).left(12));
         Assert.assertEquals(12, t.inorderSuccessorOf().v());
     }
+
+    @Test
+    public void testFindFirstCommonAccessor() throws Exception {
+        BTree t = root(15)
+                .left(root(10).left(root(5).left(1).right(root(7).right(8))))
+                .right(root(20).left(17).right(25));
+
+        Assert.assertEquals(15, t.fistCommonAncestorOf(8, 17).v());
+        Assert.assertEquals(5, t.fistCommonAncestorOf(1, 8).v());
+    }
 }
