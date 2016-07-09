@@ -80,6 +80,24 @@ class BTree {
         return fistCommonAncestorOf(this, a, b);
     }
 
+    void printAllPathsOfSum(int sum){
+        printAllPathsOfSum(this, sum);
+    }
+
+    private void printAllPathsOfSum(BTree r, int sum){
+        if(r.left != null){
+            printAllPathsOfSum(r.left, sum - r.v);
+            printAllPathsOfSum(r.left, sum);
+        }
+        if(r.right != null){
+            printAllPathsOfSum(r.right, sum - r.v);
+            printAllPathsOfSum(r.right, sum);
+        }
+        if(sum - r.v == 0) {
+            System.out.println("Found: ->" + r.v);
+        }
+    }
+
     private BTree fistCommonAncestorOf(BTree r, int a, int b) {
         if (r == null) {
             return null;
