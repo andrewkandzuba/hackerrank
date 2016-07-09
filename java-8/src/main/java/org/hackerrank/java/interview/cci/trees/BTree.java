@@ -81,20 +81,25 @@ class BTree {
     }
 
     void printAllPathsOfSum(int sum){
-        printAllPathsOfSum(this, sum);
+        printAllPathsOfSum(this, sum, this, sum);
     }
 
-    private void printAllPathsOfSum(BTree r, int sum){
+    private void printAllPathsOfSum(BTree r, int sum, BTree s, int total){
+        if(sum - r.v == 0) {
+            if(sum == total){
+                System.out.println(String.format("%s", r.v));
+            } else {
+                System.out.println(String.format("%s->%s", s.v, r.v));
+            }
+        }
+        BTree ns = (sum == total) ? r : s;
         if(r.left != null){
-            printAllPathsOfSum(r.left, sum - r.v);
-            printAllPathsOfSum(r.left, sum);
+            printAllPathsOfSum(r.left, sum - r.v, ns, total);
+            printAllPathsOfSum(r.left, sum, ns, total);
         }
         if(r.right != null){
-            printAllPathsOfSum(r.right, sum - r.v);
-            printAllPathsOfSum(r.right, sum);
-        }
-        if(sum - r.v == 0) {
-            System.out.println("Found: ->" + r.v);
+            printAllPathsOfSum(r.right, sum - r.v, ns, total);
+            printAllPathsOfSum(r.right, sum, ns, total);
         }
     }
 

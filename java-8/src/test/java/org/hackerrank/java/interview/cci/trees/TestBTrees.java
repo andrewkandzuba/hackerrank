@@ -115,8 +115,8 @@ public class TestBTrees {
                 .left(root(10).left(root(5).left(1).right(root(7).right(8))))
                 .right(root(20).left(17).right(25));
 
-        //t.printAllPathsOfSum(15);
+        t.printAllPathsOfSum(15);
         t.printAllPathsOfSum(25);
-        //t.printAllPathsOfSum(8);
+        t.printAllPathsOfSum(8);
     }
 }
