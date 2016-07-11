@@ -62,7 +62,17 @@ public class TestConcurrent {
     @Test
     public void testCancellation() throws Exception {
         final TrackingCancellingExecutorService es = PlatformExecutors.newFixedTrackingCancellingExecutorService();
+        SocketMock sm = new SocketMock();
+        SocketMockUsingTask task = new SocketMockUsingTask<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                while (sm.isOpened()){
 
+                }
+                return true;
+            }
+        };
+        task.setSocketMock(sm);
 
     }
 

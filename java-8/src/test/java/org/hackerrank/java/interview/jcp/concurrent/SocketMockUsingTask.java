@@ -2,9 +2,11 @@ package org.hackerrank.java.interview.jcp.concurrent;
 
 import org.hackerrank.java.interview.jcp.interruption.concurrent.CancellableTask;
 
+import java.io.IOException;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.RunnableFuture;
 
-public abstract class SocketMockUsingTask implements CancellableTask<SocketMock> {
+public abstract class SocketMockUsingTask<T> implements CancellableTask<T> {
     private SocketMock socketMock;
 
     public synchronized void setSocketMock(SocketMock socketMock) {
@@ -13,11 +15,27 @@ public abstract class SocketMockUsingTask implements CancellableTask<SocketMock>
 
     @Override
     public synchronized void cancel() {
-
+        try {
+            if (socketMock != null) {
+                socketMock.close();
+            }
+        } catch (IOException ignored) {
+        }
     }
 
     @Override
-    public RunnableFuture<SocketMock> newTask() {
-        return null;
+    public RunnableFuture<T> newTask() {
+        return new FutureTask<T>(this) {
+            @Override
+            public boolean cancel(boolean mayInterruptIfRunning) {
+                boolean isCancelled;
+                try {
+                    SocketMockUsingTask.this.cancel();
+                } finally {
+                    isCancelled = super.cancel(mayInterruptIfRunning);
+                }
+                return isCancelled;
+            }
+        };
     }
 }
