@@ -1,7 +1,7 @@
 package org.hackerrank.java.interview.jcp.interruption.nio;
 
-import org.hackerrank.java.interview.jcp.interruption.concurrent.ExecutorServiceShutdown;
-import org.hackerrank.java.interview.jcp.utils.ExceptionsManager;
+import org.hackerrank.java.interview.jcp.interruption.concurrent.PlatformExecutors;
+import org.hackerrank.java.interview.jcp.interruption.concurrent.ExceptionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +64,7 @@ public class JcpNioServer extends Thread {
         }
 
         ses.shutdown();
-        ExecutorServiceShutdown.shutdownGracefully(ses);
+        PlatformExecutors.shutdownGracefully(ses);
     }
 
     @Override
@@ -128,7 +128,7 @@ public class JcpNioServer extends Thread {
                 }
             }
         } catch (IOException e) {
-            throw ExceptionsManager.launderThrowable(e);
+            throw ExceptionManager.launderThrowable(e);
         }
         log.info("Server is stopped");
     }

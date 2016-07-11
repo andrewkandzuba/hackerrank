@@ -1,6 +1,6 @@
 package org.hackerrank.java.interview.jcp.interruption.nio;
 
-import org.hackerrank.java.interview.jcp.utils.ExceptionsManager;
+import org.hackerrank.java.interview.jcp.interruption.concurrent.ExceptionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +48,7 @@ public class JcpNioClient implements Runnable {
             send(client, "IBM");
             send(client, "Google");
         } catch (IOException e) {
-            throw ExceptionsManager.launderThrowable(e);
+            throw ExceptionManager.launderThrowable(e);
         } finally {
             if(client != null){
                 try {

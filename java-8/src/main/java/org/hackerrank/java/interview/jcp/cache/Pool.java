@@ -6,7 +6,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import static org.hackerrank.java.interview.jcp.utils.ExceptionsManager.launderThrowable;
+import static org.hackerrank.java.interview.jcp.interruption.concurrent.ExceptionManager.launderThrowable;
 
 public class Pool<P extends Cacheable> implements Closeable {
     private final int capacity;

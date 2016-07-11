@@ -1,6 +1,6 @@
-package org.hackerrank.java.interview.jcp.utils;
+package org.hackerrank.java.interview.jcp.interruption.concurrent;
 
-public abstract class ExceptionsManager {
+public abstract class ExceptionManager {
     public static RuntimeException launderThrowable(Throwable t) {
         if (t instanceof RuntimeException) {
             return (RuntimeException) t;

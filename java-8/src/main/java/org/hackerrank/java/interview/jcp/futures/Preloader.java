@@ -1,6 +1,6 @@
 package org.hackerrank.java.interview.jcp.futures;
 
-import org.hackerrank.java.interview.jcp.utils.ExceptionsManager;
+import org.hackerrank.java.interview.jcp.interruption.concurrent.ExceptionManager;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -25,7 +25,7 @@ public class Preloader {
             if (cause instanceof DataLoadException){
                 throw (DataLoadException) cause;
             } else {
-                throw ExceptionsManager.launderThrowable(cause);
+                throw ExceptionManager.launderThrowable(cause);
             }
         }
     }

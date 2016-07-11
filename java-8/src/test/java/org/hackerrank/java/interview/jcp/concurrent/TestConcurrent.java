@@ -1,7 +1,7 @@
 package org.hackerrank.java.interview.jcp.concurrent;
 
-import org.hackerrank.java.interview.jcp.interruption.concurrent.ExecutorServiceShutdown;
-import org.hackerrank.java.interview.jcp.interruption.concurrent.TrackingExecutorService;
+import org.hackerrank.java.interview.jcp.interruption.concurrent.PlatformExecutors;
+import org.hackerrank.java.interview.jcp.interruption.concurrent.TrackingCancellingExecutorService;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -22,13 +22,13 @@ public class TestConcurrent {
                 System.out.println(String.format("counter = %s", counter.getAndIncrement()));
             }
         });
-        ExecutorServiceShutdown.shutdownGracefully(service);
+        PlatformExecutors.shutdownGracefully(service);
     }
 
     @Test
     public void testTrackingExecutionService() throws Exception {
         int parallelismLevel = Runtime.getRuntime().availableProcessors();
-        final TrackingExecutorService es = new TrackingExecutorService(Executors.newFixedThreadPool(parallelismLevel));
+        final TrackingCancellingExecutorService es = PlatformExecutors.newFixedTrackingCancellingExecutorService(parallelismLevel);
         final TransferQueue<Integer> queue = new LinkedTransferQueue<>();
 
         int nTasks = parallelismLevel * 2;
@@ -52,9 +52,22 @@ public class TestConcurrent {
         }
         queue.take();
 
-        List<Runnable> unprocessed = ExecutorServiceShutdown.shutdownGracefully(es);
+        List<Runnable> unprocessed = PlatformExecutors.shutdownGracefully(es);
         Set<Runnable> cancelledAndShutdown = es.getTasksCancelledAndShutdown();
         Assert.assertEquals(parallelismLevel - 1, unprocessed.size());
         Assert.assertEquals(parallelismLevel, cancelledAndShutdown.size());
+    }
+
+
+    @Test
+    public void testCancellation() throws Exception {
+        final TrackingCancellingExecutorService es = PlatformExecutors.newFixedTrackingCancellingExecutorService();
+
+
+    }
+
+    @Test
+    public void testUncaughtExceptionHandler() throws Exception {
+
     }
 }

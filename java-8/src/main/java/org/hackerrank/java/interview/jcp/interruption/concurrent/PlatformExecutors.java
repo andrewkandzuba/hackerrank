@@ -4,9 +4,20 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-public final class ExecutorServiceShutdown {
+public final class PlatformExecutors {
+
+    public static TrackingCancellingExecutorService newFixedTrackingCancellingExecutorService(){
+        return newFixedTrackingCancellingExecutorService(Runtime.getRuntime().availableProcessors());
+    }
+
+    public static TrackingCancellingExecutorService newFixedTrackingCancellingExecutorService(int parallelismLevel){
+        return new TrackingCancellingExecutorService(
+                parallelismLevel, parallelismLevel, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+    }
+
     public static List<Runnable> shutdownGracefully(ExecutorService es){
         List<Runnable> unprocessed = new LinkedList<>();
         es.shutdown();

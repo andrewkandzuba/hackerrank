@@ -3,7 +3,7 @@ package org.hackerrank.java.interview.jcp.cache;
 
 import java.util.concurrent.*;
 
-import static org.hackerrank.java.interview.jcp.utils.ExceptionsManager.launderThrowable;
+import static org.hackerrank.java.interview.jcp.interruption.concurrent.ExceptionManager.launderThrowable;
 
 public class Memoizer<A, V> implements Computable<A, V> {
     protected final ConcurrentMap<A, Future<V>> cache = new ConcurrentHashMap<>();
