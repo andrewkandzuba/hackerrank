@@ -1,4 +1,4 @@
-package org.hackerrank.java.interview.jcp.interruption;
+package org.hackerrank.java.interview.jcp.interruption.nio;
 
 import org.hackerrank.java.interview.jcp.utils.ExceptionsManager;
 import org.slf4j.Logger;
@@ -9,8 +9,6 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.Scanner;
-
-import static org.hackerrank.java.interview.jcp.interruption.JcpNioServer.Commands.buy;
 
 public class JcpNioClient implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(JcpNioServer.class);
@@ -54,7 +52,7 @@ public class JcpNioClient implements Runnable {
         } finally {
             if(client != null){
                 try {
-                    send(client, buy.toString());
+                    send(client, JcpNioServer.Commands.buy.toString());
                     client.close();
                 } catch (IOException e) {
                     log.error(e.getMessage(), e);

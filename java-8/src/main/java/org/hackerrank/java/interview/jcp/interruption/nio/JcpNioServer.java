@@ -1,5 +1,6 @@
-package org.hackerrank.java.interview.jcp.interruption;
+package org.hackerrank.java.interview.jcp.interruption.nio;
 
+import org.hackerrank.java.interview.jcp.interruption.concurrent.ExecutorServiceShutdown;
 import org.hackerrank.java.interview.jcp.utils.ExceptionsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,16 +64,7 @@ public class JcpNioServer extends Thread {
         }
 
         ses.shutdown();
-        try {
-            if (!ses.awaitTermination(100, TimeUnit.MILLISECONDS)) {
-                ses.shutdownNow();
-                if (!ses.awaitTermination(100, TimeUnit.MILLISECONDS)) {
-                    System.err.println("Pool is not shutting down!!!");
-                }
-            }
-        } catch (InterruptedException e) {
-            ses.shutdownNow();
-        }
+        ExecutorServiceShutdown.shutdownGracefully(ses);
     }
 
     @Override
@@ -80,12 +72,8 @@ public class JcpNioServer extends Thread {
         log.info("Server is started");
         try (Selector selector = Selector.open()) {
             try (ServerSocketChannel ssc = ServerSocketChannel.open()) {
-                // Create address
-                InetSocketAddress addr = new InetSocketAddress(port);
-                // Bind to local port and set a non-blocking mode
-                ssc.bind(addr);
+                ssc.bind(new InetSocketAddress(port));
                 ssc.configureBlocking(false);
-                // Register selection keys
                 ssc.register(selector, ssc.validOps());
 
                 while (!Thread.currentThread().isInterrupted()) {
