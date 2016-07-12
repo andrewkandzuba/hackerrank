@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.RunnableFuture;
 
-public abstract class SocketMockUsingTask<T> implements CancellableTask<T> {
+abstract class SocketMockUsingTask<T> implements CancellableTask<T> {
     private SocketMock socketMock;
 
-    public synchronized void setSocketMock(SocketMock socketMock) {
+    synchronized void setSocketMock(SocketMock socketMock) {
         this.socketMock = socketMock;
     }
 
@@ -19,8 +19,7 @@ public abstract class SocketMockUsingTask<T> implements CancellableTask<T> {
             if (socketMock != null) {
                 socketMock.close();
             }
-        } catch (IOException ignored) {
-        }
+        } catch (IOException ignored) {}
     }
 
     @Override
