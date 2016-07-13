@@ -14,16 +14,25 @@ class SocketMock implements Closeable {
 
     int read(byte[] buffer) throws SocketMockException {
         int read = 0;
-        while (!closed) {
-            System.out.println("Emulates long operation");
-            try {
-                TimeUnit.MILLISECONDS.sleep(100);
-            } catch (InterruptedException ignored) {}
+        boolean interrupted = false;
+        try {
+            while (!closed) {
+                System.out.println("Emulates long operation");
+                try {
+                    TimeUnit.MILLISECONDS.sleep(100);
+                } catch (InterruptedException ignored) {
+                    interrupted = true;
+                }
+            }
+            if (closed) {
+                System.out.println("Socket is closed abruptly");
+                throw new SocketMockException("Socket is closed abruptly");
+            }
+            return read;
+        } finally {
+            if(interrupted){
+                Thread.currentThread().interrupt();
+            }
         }
-        if (closed) {
-            System.out.println("Socket is closed abruptly");
-            throw new SocketMockException("Socket is closed abruptly");
-        }
-        return read;
     }
 }

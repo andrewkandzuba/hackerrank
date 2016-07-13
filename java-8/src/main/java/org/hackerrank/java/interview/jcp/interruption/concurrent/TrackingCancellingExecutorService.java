@@ -42,7 +42,7 @@ public class TrackingCancellingExecutorService extends ThreadPoolExecutor {
         super.afterExecute(r, t);
         if (t == null && r instanceof Future<?>) {
             try {
-                Object result = ((Future<?>) r).get();
+                ((Future<?>) r).get();
             } catch (CancellationException ce) {
                 t = ce;
             } catch (ExecutionException ee) {
