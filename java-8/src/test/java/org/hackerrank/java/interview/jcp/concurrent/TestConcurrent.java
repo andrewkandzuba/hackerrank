@@ -1,6 +1,6 @@
 package org.hackerrank.java.interview.jcp.concurrent;
 
-import org.hackerrank.java.interview.jcp.interruption.concurrent.TrackingCancellingExecutorService;
+import org.hackerrank.java.interview.jcp.interruption.concurrent.executors.TrackingCancellingPool;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,7 +11,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hackerrank.java.interview.jcp.interruption.concurrent.ExceptionManager.launderThrowable;
-import static org.hackerrank.java.interview.jcp.interruption.concurrent.PlatformExecutors.*;
+import static org.hackerrank.java.interview.jcp.interruption.concurrent.executors.PlatformExecutors.*;
 
 public class TestConcurrent {
 
@@ -31,7 +31,7 @@ public class TestConcurrent {
     @Test
     public void testTrackingExecutionService() throws Exception {
         int parallelismLevel = Runtime.getRuntime().availableProcessors();
-        final TrackingCancellingExecutorService es = newFixedTrackingCancellingExecutorService(parallelismLevel);
+        final ExecutorService es = newServerThreadPool(parallelismLevel);
         final TransferQueue<Integer> queue = new LinkedTransferQueue<>();
 
         int nTasks = parallelismLevel * 2;
@@ -56,7 +56,7 @@ public class TestConcurrent {
         queue.take();
 
         List<Runnable> unprocessed = shutdownGracefully(es);
-        Set<Runnable> cancelledAndShutdown = es.getTasksCancelledAndShutdown();
+        Set<Runnable> cancelledAndShutdown = ((TrackingCancellingPool) es).getTasksCancelledAndShutdown();
         Assert.assertEquals(parallelismLevel - 1, unprocessed.size());
         Assert.assertEquals(parallelismLevel, cancelledAndShutdown.size());
     }
@@ -64,7 +64,7 @@ public class TestConcurrent {
 
     @Test
     public void testCancellationRun() throws Exception {
-        final TrackingCancellingExecutorService es = newSingleThreadTrackingCancellingExecutorService(new UEHThreadFactory());
+        final ExecutorService es = newServerThreadPool();
         SocketMock sm = new SocketMock();
         SocketMockUsingTask<Integer> task = new SocketMockUsingTask<Integer>() {
             @Override
@@ -81,7 +81,7 @@ public class TestConcurrent {
     @Test
     public void testBlockedRun() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
-        final TrackingCancellingExecutorService es = newFixedTrackingCancellingExecutorService(2, new UEHThreadFactory());
+        final ExecutorService es = newServerThreadPool(2);
         SocketMock sm = new SocketMock();
         SocketMockUsingTask<Integer> task = new SocketMockUsingTask<Integer>() {
             @Override
@@ -115,7 +115,7 @@ public class TestConcurrent {
     @Test
     public void testUncaughtExceptionHandler() throws Exception {
         int parallelismLevel = Runtime.getRuntime().availableProcessors();
-        TrackingCancellingExecutorService es = newFixedTrackingCancellingExecutorService(parallelismLevel + 1, new UEHThreadFactory());
+        ExecutorService es = newServerThreadPool(parallelismLevel + 1);
         final CountDownLatch latch = new CountDownLatch(parallelismLevel);
         final CountDownLatch finalization = new CountDownLatch(1);
         SocketMock sm = new SocketMock();

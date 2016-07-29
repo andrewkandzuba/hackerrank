@@ -1,5 +1,6 @@
-package org.hackerrank.java.interview.jcp.interruption.concurrent;
+package org.hackerrank.java.interview.jcp.interruption.concurrent.executors;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,25 +9,24 @@ import java.util.concurrent.*;
 import static org.hackerrank.java.interview.jcp.interruption.concurrent.ExceptionManager.launderThrowable;
 
 public final class PlatformExecutors {
+    private final static String DEFAULT_POOL_NAME = "ServerThreadPool";
+    private final static int DEFAULT_CAPACITY = 50;
+    private final static double uCPU = 0.5;
+    private final static double wcFactor = 0.25;
 
-    public static TrackingCancellingExecutorService newFixedTrackingCancellingExecutorService() {
-        return newFixedTrackingCancellingExecutorService(Runtime.getRuntime().availableProcessors());
+    public static ExecutorService newServerThreadPool() {
+        int parallelismLevel = new BigDecimal(Runtime.getRuntime().availableProcessors())
+                .multiply(BigDecimal.valueOf(uCPU))
+                .multiply(BigDecimal.valueOf(1 + wcFactor)).intValueExact();
+        return newServerThreadPool(DEFAULT_POOL_NAME, parallelismLevel, DEFAULT_CAPACITY);
     }
 
-    public static TrackingCancellingExecutorService newFixedTrackingCancellingExecutorService(int parallelismLevel) {
-        return newFixedTrackingCancellingExecutorService(parallelismLevel, Executors.defaultThreadFactory());
+    public static ExecutorService newServerThreadPool(int parallelismLevel) {
+        return new ServerThreadPool(DEFAULT_POOL_NAME, parallelismLevel, DEFAULT_CAPACITY);
     }
 
-    public static TrackingCancellingExecutorService newFixedTrackingCancellingExecutorService(int parallelismLevel, ThreadFactory threadFactory) {
-        return new TrackingCancellingExecutorService(parallelismLevel, parallelismLevel, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), threadFactory);
-    }
-
-    public static TrackingCancellingExecutorService newSingleThreadTrackingCancellingExecutorService() {
-        return newFixedTrackingCancellingExecutorService(1);
-    }
-
-    public static TrackingCancellingExecutorService newSingleThreadTrackingCancellingExecutorService(ThreadFactory threadFactory) {
-        return newFixedTrackingCancellingExecutorService(1, threadFactory);
+    public static ExecutorService newServerThreadPool(String poolName, int parallelismLevel, int capacity) {
+        return new ServerThreadPool(poolName, parallelismLevel, capacity);
     }
 
     public static List<Runnable> shutdownGracefully(ExecutorService es) {

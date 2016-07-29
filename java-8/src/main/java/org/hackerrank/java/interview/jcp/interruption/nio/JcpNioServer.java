@@ -1,6 +1,6 @@
 package org.hackerrank.java.interview.jcp.interruption.nio;
 
-import org.hackerrank.java.interview.jcp.interruption.concurrent.PlatformExecutors;
+import org.hackerrank.java.interview.jcp.interruption.concurrent.executors.PlatformExecutors;
 import org.hackerrank.java.interview.jcp.interruption.concurrent.ExceptionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
