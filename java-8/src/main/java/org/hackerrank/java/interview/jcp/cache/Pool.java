@@ -10,7 +10,6 @@ import static org.hackerrank.java.interview.jcp.interruption.concurrent.Exceptio
 
 public class Pool<P extends Cacheable> implements Closeable {
     private final int capacity;
-    private final ExecutorService executorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors(), new DaemonThreadFactory());
     private final HolderMemoizer memoizer;
 
     public Pool(PooledFactory<P> factory) {
@@ -19,7 +18,7 @@ public class Pool<P extends Cacheable> implements Closeable {
 
     public Pool(PooledFactory<P> factory, int capacity) {
         this.capacity = capacity;
-        this.memoizer = new HolderMemoizer(arg -> new Holder<>(factory.create()), this.executorService);
+        this.memoizer = new HolderMemoizer(arg -> new Holder<>(factory.create()));
     }
 
     public P take() throws InterruptedException {
@@ -50,21 +49,12 @@ public class Pool<P extends Cacheable> implements Closeable {
 
     @Override
     public void close() throws IOException {
-        executorService.shutdown();
-        try {
-            if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
-                executorService.shutdownNow();
-                if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
-                    System.err.println("Pool did not terminate");
-                } else {
-                    for (int i = 0; i < capacity; i++) {
-                        memoizer.cleanUp(i, pHolder -> cleanUp(pHolder.value));
-                    }
-                }
+        for (int i = 0; i < capacity; i++) {
+            try {
+                memoizer.cleanUp(i, pHolder -> cleanUp(pHolder.value));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        } catch (InterruptedException e) {
-            executorService.shutdownNow();
-            Thread.currentThread().interrupt();
         }
     }
 
@@ -74,6 +64,10 @@ public class Pool<P extends Cacheable> implements Closeable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public interface PooledFactory<P extends Cacheable> {
+        P create();
     }
 
     public static class DaemonThreadFactory implements ThreadFactory {
@@ -92,10 +86,6 @@ public class Pool<P extends Cacheable> implements Closeable {
 
     }
 
-    public interface PooledFactory<P extends Cacheable> {
-        P create();
-    }
-
     private static class Holder<P> {
         static final int FREE = 0;
         static final int BUSY = 1;
@@ -111,8 +101,8 @@ public class Pool<P extends Cacheable> implements Closeable {
 
     private class HolderMemoizer extends Memoizer<Integer, Holder<P>> {
 
-        HolderMemoizer(Computable<Integer, Holder<P>> c, ExecutorService es) {
-            super(c, es);
+        HolderMemoizer(Computable<Integer, Holder<P>> c) {
+            super(c);
         }
 
         void expire(final Integer arg, Consumer<Holder<P>> cleaner) throws InterruptedException {
@@ -122,7 +112,7 @@ public class Pool<P extends Cacheable> implements Closeable {
                     Callable<Holder<P>> eval = () -> c.compute(arg);
                     FutureTask<Holder<P>> ft = new FutureTask<>(eval);
                     if (cache.replace(arg, old, ft)) {
-                        es.submit(ft);
+                        ft.run();
                         try {
                             cleaner.accept(old.get());
                             ft.get();
