@@ -29,13 +29,13 @@ public final class PlatformExecutors {
         return newFixedTrackingCancellingExecutorService(1, threadFactory);
     }
 
-    public static List<Runnable> shutdownGracefully(ExecutorService es) {
+    public static List<Runnable> shutdownGracefully(ExecutorService es, long timeout, TimeUnit unit) {
         List<Runnable> unprocessed = new LinkedList<>();
         es.shutdown();
         try {
-            if (!es.awaitTermination(100, TimeUnit.MILLISECONDS)) {
+            if (!es.awaitTermination(timeout, unit)) {
                 unprocessed.addAll(es.shutdownNow());
-                if (!es.awaitTermination(100, TimeUnit.MILLISECONDS)) {
+                if (!es.awaitTermination(timeout, unit)) {
                     System.err.println("Pool is not shutting down!!!");
                 }
             }
@@ -45,12 +45,16 @@ public final class PlatformExecutors {
         return Collections.unmodifiableList(unprocessed);
     }
 
+    public static List<Runnable> shutdownGracefully(ExecutorService es) {
+        return shutdownGracefully(es, 100, TimeUnit.MILLISECONDS);
+    }
+
     public static <T> T timedRun(ExecutorService taskExec, Callable<T> c, long timeout, TimeUnit unit) throws InterruptedException {
         Future<T> f = taskExec.submit(c);
         T t = null;
         try {
             t = f.get(timeout, unit);
-        } catch (TimeoutException ignored){
+        } catch (TimeoutException ignored) {
         } catch (ExecutionException e) {
             throw launderThrowable(e.getCause());
         } finally {
