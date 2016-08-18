@@ -1,12 +1,14 @@
 package org.hackerrank.java.interview.jcp.future;
 
 import org.hackerrank.java.interview.jcp.futures.Router;
-import org.hackerrank.java.interview.jcp.interruption.concurrent.PlatformExecutors;
+import org.hackerrank.java.interview.jcp.interruption.concurrent.executors.PlatformExecutors;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.hackerrank.java.interview.jcp.interruption.concurrent.executors.PlatformExecutors.newServerThreadPool;
 
 public class TestCompletableFuture {
 
@@ -27,7 +29,7 @@ public class TestCompletableFuture {
     @Test
     public void testCompletableFutureStream() throws Exception {
         int parallelismLevel = Runtime.getRuntime().availableProcessors();
-        ExecutorService es = PlatformExecutors.newFixedTrackingCancellingExecutorService(parallelismLevel + 2);
+        ExecutorService es = newServerThreadPool(parallelismLevel + 2);
         final BlockingDeque<Integer> queue = new LinkedBlockingDeque<>();
         final AtomicInteger counter = new AtomicInteger();
         // Producers

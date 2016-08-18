@@ -8,11 +8,9 @@ import static org.hackerrank.java.interview.jcp.interruption.concurrent.Exceptio
 public class Memoizer<A, V> implements Computable<A, V> {
     protected final ConcurrentMap<A, Future<V>> cache = new ConcurrentHashMap<>();
     protected final Computable<A, V> c;
-    protected final ExecutorService es;
 
-    public Memoizer(Computable<A, V> c, ExecutorService es) {
+    public Memoizer(Computable<A, V> c) {
         this.c = c;
-        this.es = es;
     }
 
     @Override
@@ -25,7 +23,7 @@ public class Memoizer<A, V> implements Computable<A, V> {
                 f = cache.putIfAbsent(arg, ft);
                 if (f == null) {
                     f = ft;
-                    es.submit(ft);
+                    ft.run();
                 }
             }
             try {

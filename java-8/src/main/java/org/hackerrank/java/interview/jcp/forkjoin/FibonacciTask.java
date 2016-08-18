@@ -11,9 +11,12 @@ public class FibonacciTask extends RecursiveTask<Integer> {
 
     @Override
     public Integer compute() {
-        System.out.println(String.format("Compute FibonacciTask %s", n));
-        if (n <= 1)
-            return n;
+        if (n == 0) {
+            return 0;
+        }
+        if (n < 2) {
+            return 1;
+        }
         FibonacciTask f1 = new FibonacciTask(n - 1);
         f1.fork();
         FibonacciTask f2 = new FibonacciTask(n - 2);
