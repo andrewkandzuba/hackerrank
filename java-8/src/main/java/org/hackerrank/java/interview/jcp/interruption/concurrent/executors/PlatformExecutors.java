@@ -17,7 +17,7 @@ public final class PlatformExecutors {
     public static ExecutorService newServerThreadPool() {
         int parallelismLevel = new BigDecimal(Runtime.getRuntime().availableProcessors())
                 .multiply(BigDecimal.valueOf(uCPU))
-                .multiply(BigDecimal.valueOf(1 + wcFactor)).intValueExact();
+                .multiply(BigDecimal.valueOf(1 + wcFactor)).intValue();
         return newServerThreadPool(DEFAULT_POOL_NAME, parallelismLevel, DEFAULT_CAPACITY);
     }
 

@@ -1,6 +1,6 @@
 package org.hackerrank.java.interview.jcp.liveness.deadlocks;
 
-import org.hackerrank.java.interview.jcp.interruption.concurrent.PlatformExecutors;
+import org.hackerrank.java.interview.jcp.interruption.concurrent.executors.PlatformExecutors;
 import org.hackerrank.java.interview.jcp.liveness.deadlocks.finance.Account;
 import org.hackerrank.java.interview.jcp.liveness.deadlocks.finance.Amount;
 import org.hackerrank.java.interview.jcp.liveness.deadlocks.finance.Bank;
