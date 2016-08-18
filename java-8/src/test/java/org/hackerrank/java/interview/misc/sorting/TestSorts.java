@@ -9,7 +9,7 @@ public class TestSorts {
     @Test
     public void testMeasureSorts() throws Exception {
         List<Sort<Integer>> sorts = Arrays.asList(new HeapSort<>(), new MergeSort<>(), new InsertSort<>());
-        sorts.stream().forEach(sort -> SortUtils.measure(sort, 10000, 10));
+        sorts.forEach(sort -> SortUtils.measure(sort, 10000, 10));
     }
 
     @Test

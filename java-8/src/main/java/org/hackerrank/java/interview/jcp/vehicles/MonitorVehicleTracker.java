@@ -32,7 +32,7 @@ public class MonitorVehicleTracker {
     /**
      * Deep copy of the locations collections.
      * unmodifiableMap is not enough in this case, as it protects only collection, but not its elements
-     * Because deepCopy is called from a synchronized method, the tracker’s intrinsic lock is held for the
+     * Because deepCopy is called from a synchronized method, the trackers intrinsic lock is held for the
      * duration of what might be a long-running copy operation, and this could degrade the responsiveness
      * of the user interface when many vehicles are being tracked.
      * @param m
