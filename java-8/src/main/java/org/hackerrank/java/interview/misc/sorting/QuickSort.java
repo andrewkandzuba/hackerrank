@@ -9,7 +9,7 @@ public class QuickSort<T extends Comparable<T>> implements Sort<T> {
     }
 
     private void sort(T[] array, int from, int to) {
-        if (to - from == 0) {
+        if (to <= from) {
             return;
         }
         int i = from, j = to;
@@ -29,7 +29,7 @@ public class QuickSort<T extends Comparable<T>> implements Sort<T> {
                     cur = i;
             }
         }
-        sort(array, from, cur);
+        sort(array, from, cur - 1);
         sort(array, cur + 1, to);
     }
 
