@@ -12,11 +12,11 @@ public class Pool<P extends Cacheable> implements Closeable {
     private final int capacity;
     private final HolderMemoizer memoizer;
 
-    public Pool(PooledFactory<P> factory) {
+    public Pool(CacheableFactory<P> factory) {
         this(factory, 1);
     }
 
-    public Pool(PooledFactory<P> factory, int capacity) {
+    public Pool(CacheableFactory<P> factory, int capacity) {
         this.capacity = capacity;
         this.memoizer = new HolderMemoizer(arg -> new Holder<>(factory.create()));
     }
@@ -64,10 +64,6 @@ public class Pool<P extends Cacheable> implements Closeable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public interface PooledFactory<P extends Cacheable> {
-        P create();
     }
 
     public static class DaemonThreadFactory implements ThreadFactory {

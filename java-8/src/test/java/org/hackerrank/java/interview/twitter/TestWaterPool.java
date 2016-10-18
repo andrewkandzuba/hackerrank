@@ -1,4 +1,4 @@
-package org.hackerrank.java.twitter;
+package org.hackerrank.java.interview.twitter;
 
 import org.junit.Assert;
 import org.junit.Test;
