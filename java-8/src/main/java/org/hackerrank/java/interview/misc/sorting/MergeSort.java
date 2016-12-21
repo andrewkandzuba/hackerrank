@@ -8,7 +8,12 @@ class MergeSort<T extends Comparable<T>> implements Sort<T> {
 
     @Override
     public T[] sort(T[] array) {
-        MergeAction fb = new MergeAction<>(array, 0, array.length);
+        return sort(array, 0, array.length);
+    }
+
+    @Override
+    public T[] sort(T[] array, int offset, int length) {
+        MergeAction fb = new MergeAction<>(array, offset, length);
         ForkJoinPool forkJoinPool = new ForkJoinPool();
         forkJoinPool.invoke(fb);
         return array;

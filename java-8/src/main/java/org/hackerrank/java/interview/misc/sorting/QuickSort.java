@@ -8,11 +8,12 @@ public class QuickSort<T extends Comparable<T>> implements Sort<T> {
         return array;
     }
 
-    private void sort(T[] array, int from, int to) {
-        if (to <= from) {
-            return;
+    @Override
+    public T[] sort(T[] array, int from, int length) {
+        if (length <= from) {
+            return array;
         }
-        int i = from, j = to;
+        int i = from, j = length;
         int cur = i - (i - j) / 2;
         while (i < j) {
             while (i < cur && (array[i].compareTo(array[cur]) <= 0)) {
@@ -30,7 +31,8 @@ public class QuickSort<T extends Comparable<T>> implements Sort<T> {
             }
         }
         sort(array, from, cur - 1);
-        sort(array, cur + 1, to);
+        sort(array, cur + 1, length);
+        return array;
     }
 
     private void swap(T[] array, int i, int j) {

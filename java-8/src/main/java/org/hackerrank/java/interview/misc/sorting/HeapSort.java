@@ -3,12 +3,17 @@ package org.hackerrank.java.interview.misc.sorting;
 class HeapSort<T extends Comparable<T>> implements Sort<T> {
     @Override
     public T[] sort(T[] array) {
+        return sort(array, 0, array.length);
+    }
+
+    @Override
+    public T[] sort(T[] array, int offset, int length) {
         // Nothing to sorting
         if (array.length == 0 || array.length == 1) {
             return array;
         }
         // HeapSort
-        buildHeap(0, array, array.length);
+        buildHeap(offset, array, length);
         int l = array.length;
         do {
             swap(0, --l, array);
