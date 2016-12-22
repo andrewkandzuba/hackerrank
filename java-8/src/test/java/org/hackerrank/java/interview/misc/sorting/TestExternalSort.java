@@ -36,6 +36,27 @@ public class TestExternalSort {
         Assert.assertTrue(SortUtils.isArraySorted(result));
     }
 
+    @Test
+    public void segmentationOddSizeTest() throws Exception {
+        int testArraySize = 501;
+        int memSize = 32;
+
+        byte[] array = generateRandom(testArraySize);
+        System.out.println(Arrays.toString(array));
+
+        File fSource = File.createTempFile("source", ".tmp");
+        FileUtils.writeByteArrayToFile(fSource, array);
+        File fTarget = File.createTempFile("target", ".tmp");
+        ExternalSort sort = new ExternalSortInPlace();
+        sort.sort(fSource.getAbsolutePath(), fTarget.getAbsolutePath(), memSize);
+
+        byte[] result = new byte[testArraySize];
+        try (InputStream in = new BufferedInputStream(new FileInputStream(fTarget))) {
+            IOUtils.readFully(in, result);
+        }
+        Assert.assertTrue(SortUtils.isArraySorted(result));
+    }
+
     private byte[] generateRandom(int length) {
         Random random = new Random();
         byte[] array = new byte[length];

@@ -53,14 +53,16 @@ class ExternalSortInPlace implements ExternalSort {
                 targetRaf.write(ByteBuffer.wrap(byteBuffer, 0, fs), (startBlock - 1) * bs);
 
                 fs = targetRaf.read(ByteBuffer.wrap(byteBuffer, bs, bs), (endBlock - 1) * bs);
-                cb = endBlock;
-                while (cb - 2 > startBlock) {
-                    cb -= 2;
-                    ls = targetRaf.read(ByteBuffer.wrap(byteBuffer, 0, bs), (cb - 1) * bs);
-                    innerSort.sort(byteBuffer, totalRead(fs, ls));
-                    targetRaf.write(ByteBuffer.wrap(byteBuffer, 0, ls), (cb - 1) * bs);
+                if (fs > 0) {
+                    cb = endBlock;
+                    while (cb - 2 > startBlock) {
+                        cb -= 2;
+                        ls = targetRaf.read(ByteBuffer.wrap(byteBuffer, 0, bs), (cb - 1) * bs);
+                        innerSort.sort(byteBuffer, totalRead(fs, ls));
+                        targetRaf.write(ByteBuffer.wrap(byteBuffer, 0, ls), (cb - 1) * bs);
+                    }
+                    targetRaf.write(ByteBuffer.wrap(byteBuffer, bs, fs), (endBlock - 1) * bs);
                 }
-                targetRaf.write(ByteBuffer.wrap(byteBuffer, bs, fs), (endBlock - 1) * bs);
 
                 startBlock++;
                 endBlock--;
