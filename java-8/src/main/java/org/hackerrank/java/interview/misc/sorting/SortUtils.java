@@ -125,4 +125,19 @@ abstract class SortUtils {
         }
         return true;
     }
+
+    static boolean isArraySorted(byte[] array) {
+        if (array.length == 0 || array.length == 1) {
+            return true;
+        }
+        byte maxMet = array[0];
+        for (byte b : array) {
+            if (b < maxMet) {
+                return false;
+            } else if (b > maxMet) {
+                maxMet = b;
+            }
+        }
+        return true;
+    }
 }
