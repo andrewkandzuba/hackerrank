@@ -31,15 +31,31 @@ public class TestSearchInGraph {
     }
 
     @Test
+    public void testFindMinimalDistanceDirect() throws Exception {
+        Assert.assertEquals(Double.MAX_VALUE, findMinimalDistance(new Point[0]), 0.0);
+        Assert.assertEquals(Double.MAX_VALUE, findMinimalDistance(new Point[]{new Point(0, 1)}), 0.0);
+        Assert.assertEquals(1.0, findMinimalDistance(new Point[]{new Point(0, 1), new Point(1, 1)}), 0.0);
+        Assert.assertEquals(1.0, findMinimalDistance(new Point[]{new Point(0, 1), new Point(1, 1), new Point(1, 2)}), 0.0);
+    }
+
+    @Test
     public void testFindMinimalDistance() throws Exception {
-        Point[] points = {
+        Assert.assertEquals(Math.sqrt(2.0), findMinimalDistance(new Point[]{
                 new Point(0, 1),
                 new Point(2, 2),
                 new Point(2, 4),
                 new Point(3, 3),
-                new Point(1, 2)
-        };
+                new Point(1, 6)
+        }), 0.0);
 
-        Assert.assertEquals(2.0, findMinimalDistance(points), 0.0);
+        Assert.assertEquals(Math.sqrt(5.0), findMinimalDistance(new Point[]{
+                new Point(0, 0),
+                new Point(1, 3),
+                new Point(2, 5),
+                new Point(3, 0),
+                new Point(4, 3),
+                new Point(6, 1),
+                new Point(5, 5),
+        }), 0.0);
     }
 }
